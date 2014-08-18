@@ -47,7 +47,7 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 		global first_use
 		if not first_use:
 			actions = ["Create Issue", "Edit Issue", "Assign Issue", "Add Label(s) To Issue", 
-			"Change Project ID", "Get Project IDs (console output)"]
+			"Change Project ID", "Get Project IDs"]
 			self.window.show_quick_panel(actions, self.on_done)
 		else: 
 			self.startup()
