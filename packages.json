@@ -1,10 +1,15 @@
 {
-	"name": "GitlabIntegrate",
-	"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate",
-	"releases": [
-		{
-			"sublime_text": "*",
-			"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate/tags"
+    "schema_version": "2.0",
+    "packages": [
+       {
+			"name": "GitlabIntegrate",
+			"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate",
+			"releases": [
+				{
+					"sublime_text": "*",
+					"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate/tags"
+				}
+			]
 		}
-	]
+    ]
 }
