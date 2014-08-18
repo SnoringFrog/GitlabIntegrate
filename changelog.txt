@@ -1,0 +1,11 @@
+Sublime Gitlab Integration changelog
+------------------------------------
+Version 1.0
+====================================
+Initial release. 
+Supported features:
+-Get project IDs
+-Create Issues
+-Edit Issues
+-Quick functions for adding labels or assigning users to an issue
+-Issues can be assigned to users by the user ID or username

@@ -1,0 +1,10 @@
+{
+	"name": "Gitlab Integrate",
+	"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate",
+	"releases": [
+		{
+			"sublime_text": "*",
+			"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate/tags"
+		}
+	]
+}
