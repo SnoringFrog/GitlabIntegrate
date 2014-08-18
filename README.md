@@ -1,13 +1,16 @@
+Sublime Gitlab Integrate
+========================
 This is a Sublime Text 2 Plugin that integrates various Gitlab features into the editor. 
 
 Installation
 ----------
-There are two ways to install.
+There are three ways to install:
 
-1. If you have Package Control installed, create a .zip of the GitlabIntegrate folder in this directory and change its extension to `.sublime-package`. Place that file in `[your Sublime installation directory]/Installed Packages/` and restart Sublime
+1. Clone this repository into `[your Sumblime installation directory]/Packages/` and restart Sublime
 
-2. Copy the GitlabIntegrate folder to `[your Sublime installation directory]/Packages/`
+2. Clone/download this repo wherever you'd like, then copy the files to `[your Sublime installation directory]/Packages/GitlabIntegrate`
 
+3. If you have Package Control installed, create a .zip of the files in the repository (feel free to skip anything with "git" in the hame) the .zip extension to `.sublime-package`. Place the `.sublime-package in `[your Sublime installation directory]/Installed Packages/` and restart Sublime, Package Control should unpack it automatically.
 
 Configuration
 ----------
