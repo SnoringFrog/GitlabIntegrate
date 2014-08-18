@@ -1,0 +1,10 @@
+{
+	"name": "Alignment",
+	"details": "https://github.com/wbond/sublime_alignment",
+	"releases": [
+		{
+			"sublime_text": "*",
+			"details": "https://github.com/wbond/sublime_alignment/tags"
+		}
+	]
+}
