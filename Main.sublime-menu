@@ -1,0 +1,62 @@
+[
+  {
+    "caption": "Tools",
+    "mnemonic": "n",
+    "id": "tools",
+    "children":
+    [
+     { "caption": "-", "id": "gitlab-integrate" },
+     {
+        "caption": "Gitlab Integrate",
+        "id":"gitlab-integrate",
+        "mnemonic": "g",
+        "children":
+        [
+          {"command": "gli_prompt_create_issue",  "caption": "Create Issue" },
+          {"command": "gli_prompt_edit_issue",  "caption": "Edit Issue" },
+          {"command": "gli_prompt_assign_issue",  "caption": "Assign Issue" },
+          {"command": "gli_prompt_label_issue",  "caption": "Add Label(s) To Issue" },
+          {"command": "gli_prompt_change_project",  "caption": "Change Project ID" },
+          {"command": "gli_get_project_ids",  "caption": "Get Project IDs (console output)" },
+          {"command": "open_file", "args": {"file": "${packages}/User/GitlabIntegrate.sublime-settings"}, "caption": "Access User Settings"}
+        ]
+      }
+    ]
+  },
+  {
+    "caption": "Preferences",
+    "mnemonic": "n",
+    "id": "preferences",
+    "children":
+    [
+      {
+        "caption": "Package Settings",
+        "mnemonic": "P",
+        "id": "package-settings",
+        "children":
+        [
+          {
+            "caption": "Gitlab Integrate",
+            "children":
+            [
+              {
+                "command": "open_file",
+                "args": { "file": "${packages}/GitlabIntegrate/GitlabIntegrate.sublime-settings" },
+                "caption": "Settings – Default"
+              },
+              {
+                "command": "open_file",
+                "args": { "file": "${packages}/User/GitlabIntegrate.sublime-settings" },
+                "caption": "Settings – User"
+              }/*,
+              {
+               "command": "open_file_settings",
+                 "caption": "Settings – Syntax Specific – User"
+              }*/
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
