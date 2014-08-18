@@ -4,7 +4,7 @@ Installation
 ----------
 There are two ways to install.
 
-1. If you have Package Control installed, create a .zip of the GitlabIntegrate folder in this directory and change its extension to `.sublime-package`. Place that file in `[your Sublime installation directory]/Installed Packages` and restart Sublime
+1. If you have Package Control installed, create a .zip of the GitlabIntegrate folder in this directory and change its extension to `.sublime-package`. Place that file in `[your Sublime installation directory]/Installed Packages/` and restart Sublime
 
 2. Copy the GitlabIntegrate folder to `[your Sublime installation directory]/Packages/`
 
@@ -22,7 +22,6 @@ Before using GitlabIntegrate, you should configure the User Settings file. If yo
 3. Via file browser at
 
    `[sublime installation directory]/Packages/User/GitlabIntegrate.sublime-settings` 
-
 
 Then, copy and paste the following text into the file (replacing any text already there), editing the necessary fields:
 
