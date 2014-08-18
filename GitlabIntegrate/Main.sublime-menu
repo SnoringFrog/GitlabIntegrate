@@ -17,7 +17,7 @@
           {"command": "gli_prompt_assign_issue",  "caption": "Assign Issue" },
           {"command": "gli_prompt_label_issue",  "caption": "Add Label(s) To Issue" },
           {"command": "gli_prompt_change_project",  "caption": "Change Project ID" },
-          {"command": "gli_get_project_ids",  "caption": "Get Project IDs (console output)" },
+          {"command": "gli_get_project_ids",  "caption": "Get Project IDs" },
           {"command": "open_file", "args": {"file": "${packages}/User/GitlabIntegrate.sublime-settings"}, "caption": "Access User Settings"}
         ]
       }

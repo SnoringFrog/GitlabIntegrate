@@ -1,4 +1,11 @@
 import sublime, sublime_plugin
+import os, sys, inspect
+
+
+cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"dependencies")))
+if cmd_subfolder not in sys.path:
+	sys.path.insert(0, cmd_subfolder)
+
 import gitlab
 
 settings = sublime.load_settings('GitlabIntegrate.sublime-settings')
@@ -9,7 +16,6 @@ USER_TOKEN= settings.get("gli_user_token", " ")#from /profile/account in GitLab
 
 git = gitlab.Gitlab(PROJECT_HOST, token=USER_TOKEN) #Connect with private token
 
-sublime.run_command("gli_startup_messages")
 first_use = True
 
 intro_text = """Thank you for installing GitlabIntegrate!
@@ -44,13 +50,16 @@ Then, copy and paste the following text into the file (replacing any text alread
 
 class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		global first_use
-		if not first_use:
+		display_intro = settings.get("gli_display_intro", True)
+
+		if not display_intro:
 			actions = ["Create Issue", "Edit Issue", "Assign Issue", "Add Label(s) To Issue", 
 			"Change Project ID", "Get Project IDs"]
 			self.window.show_quick_panel(actions, self.on_done)
-		else: 
-			self.startup()
+
+		global first_use
+		if first_use:
+			self.startup(display_intro)
 			first_use = False
 
 	def on_done(self, index):
@@ -67,12 +76,10 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 		elif index == 5:
 			self.window.run_command("gli_get_project_ids")
 
-	def startup(self):
+	def startup(self, display_intro):
 		print("\nLoaded settings:\nproject_host:" + PROJECT_HOST + "\nproject_id:" + str(PROJECT_ID) + "\nuser_token:" + USER_TOKEN)
 		
 		active_window = sublime.active_window()
-
-		display_intro = settings.get("gli_display_intro", True)
 
 		if display_intro:
 			new_view = active_window.new_file()
@@ -243,25 +250,6 @@ class GliGetProjectIdsCommand(sublime_plugin.WindowCommand):
 
 	def on_done(self, index):
 		pass
-
-class GliStartupMessagesCommand(sublime_plugin.ApplicationCommand):
-	def run(self):
-		print("\nLoaded settings:\nproject_host:" + PROJECT_HOST + "\nproject_id:" + str(PROJECT_ID) + "\nuser_token:" + USER_TOKEN)
-		
-		active_window = sublime.active_window()
-
-		display_intro = settings.get("gli_display_intro", True)
-
-		if display_intro:
-			new_view = active_window.new_file()
-			new_view.set_scratch(True)
-			
-			edit = new_view.begin_edit()
-			new_view.insert(edit, 0, intro_text)
-			new_view.end_edit(edit)
-
-			settings.set("gli_display_intro", False)
-			sublime.save_settings("GitlabIntegrate.sublime-settings")
 
 
 ########################
