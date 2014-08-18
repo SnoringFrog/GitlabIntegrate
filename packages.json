@@ -3,7 +3,7 @@
     "packages": [
        {
 			"name": "GitlabIntegrate",
-			"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate/raw/master",
+			"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate.git",
 			"releases": [
 				{
 					"sublime_text": "*",
