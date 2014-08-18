@@ -1,16 +1,19 @@
-Thank you for installing GitlabIntegrate!
+This is a Sublime Text 2 Plugin that integrates various Gitlab features into the editor. To install, copy the GitlabIntegrate folder to `[your Sublime installation directory]/Packages/`
 
-GitlabIntegrate functions can be accessed via the menu (Tools -> GitlabIntegrate) or with a keyboard shortcut (Ctrl+Shift+X (Windows/Linux), Cmd+Shift+X (Mac))
+GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrate`) or with a keyboard shortcut (`Ctrl+Shift+X` (Windows/Linux), `Cmd+Shift+X` (Mac))
 
 Before using GitlabIntegrate, you should configure the User Settings file. User settings can be found 3 ways (you may need to create the file if it doesn't exist):
-	1. Via the menu at 
-		Preferences -> Package Settings -> Gitlab Integrate -> Settings - User
-	2. Via the menu at
-		Tools -> Gitlab Integrate -> Access User Settings
-	3. Via file browser at
-		[sublime installation directory]/Packages/User/GitlabIntegrate.sublime-settings 
+1. Via the menu at 
+...Preferences -> Package Settings -> Gitlab Integrate -> Settings - User
+2. Via the menu at
+...Tools -> Gitlab Integrate -> Access User Settings
+3. Via file browser at
+...[sublime installation directory]/Packages/User/GitlabIntegrate.sublime-settings 
+
 
 Then, copy and paste the following text into the file (replacing any text already there), editing the necessary fields:
+
+
 {
 	//Displays the intro document on startup
 	"gli_display_intro": false,
