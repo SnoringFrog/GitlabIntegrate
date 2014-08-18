@@ -1,10 +1,10 @@
 {
-	"name": "Alignment",
-	"details": "https://github.com/wbond/sublime_alignment",
+	"name": "GitlabIntegrate",
+	"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate",
 	"releases": [
 		{
 			"sublime_text": "*",
-			"details": "https://github.com/wbond/sublime_alignment/tags"
+			"details": "http://ud0219alyn.genworth.net/gitlab/piekarskie/GitlabIntegrate/tags"
 		}
 	]
 }
