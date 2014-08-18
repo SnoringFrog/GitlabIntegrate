@@ -5,20 +5,18 @@ GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrat
 Before using GitlabIntegrate, you should configure the User Settings file. User settings can be found 3 ways (you may need to create the file if it doesn't exist):
 
 1. Via the menu at 
-   Preferences -> Package Settings -> Gitlab Integrate -> Settings - User
+   `Preferences -> Package Settings -> Gitlab Integrate -> Settings - User`
 2. Via the menu at
-   Tools -> Gitlab Integrate -> Access User Settings
+   `Tools -> Gitlab Integrate -> Access User Settings`
 3. Via file browser at
-   [sublime installation directory]/Packages/User/GitlabIntegrate.sublime-settings 
+   `[sublime installation directory]/Packages/User/GitlabIntegrate.sublime-settings` 
 
 
 Then, copy and paste the following text into the file (replacing any text already there), editing the necessary fields:
 
 ```
 {
-	
-
-//Displays the intro document on startup
+	//Displays the intro document on startup
 	"gli_display_intro": false,
 
 	//Your Gitlab host
