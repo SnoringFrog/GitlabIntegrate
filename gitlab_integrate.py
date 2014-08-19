@@ -98,7 +98,6 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 class GliPromptCreateIssueCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		self.window.show_input_panel("Create Issue (title, [desc], [assign_to], [\"labels_1, labels_2\"], [milestone]):", "", self.on_done, None, None)
-		pass
 
 	def on_done(self, text):
 		dict_keys = ["title", "desc", "assign_to", "labels", "milestone"]
@@ -127,7 +126,6 @@ class GliCreateIssueCommand(sublime_plugin.ApplicationCommand):
 class GliPromptEditIssueCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		self.window.show_input_panel("Edit Issue (iid, [title], [desc], [assign_to], [state], [\"labels_1, labels_2\"], [milestone]):", "", self.on_done, None, None)
-		pass
 
 	def on_done(self, text):
 		dict_keys = ["iid", "title", "desc", "assign_to", "state", "labels", "milestone"]
@@ -172,7 +170,6 @@ class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 class GliPromptAssignIssueCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		self.window.show_input_panel("Assign Issue (iid, user):", "", self.on_done, None, None)
-		pass
 
 	def on_done(self, text):
 		dict_keys = ["issue_iid", "assign_to"]
@@ -278,7 +275,7 @@ def _issue_iid_to_id(iid, proj_id=PROJECT_ID):
 
 	err = "Issue " + iid + " not found"
 	print(err)
-	sublime.status_message(err)
+	sublime.error_message(err)
 	return False
 
 #Get a user's ID from their username
