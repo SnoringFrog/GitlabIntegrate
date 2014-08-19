@@ -12,8 +12,13 @@ settings = sublime.load_settings('GitlabIntegrate.sublime-settings')
 NO_HOST = "host not set"
 NO_TOKEN = "token not set"
 
-ERR_PREFIX = "ERROR: "
+ERR_PREFIX() = "ERROR: "
 ERR_COULD_NOT_CONNECT = ERR_PREFIX + "Host or Token not set, could not connect to Gitlab"
+ERR_NOT_CREATED = ERR_PREFIX + "issue not created"
+ERR_NOT_EDITED = ERR_PREFIX + "issue not edited"
+ERR_NOT_ASSIGNED = ERR_PREFIX + "issue not assigned"
+ERR_NOT_LABELED = ERR_PREFIX + "label(s) not added"
+def ERR_NOT_FOUND(item): return ERR_PREFIX + "issue {0} not found".format(item)
 
 project_host=settings.get("gli_project_host", NO_HOST)
 project_id=settings.get("gli_project_id", 0) 
@@ -21,7 +26,7 @@ user_token= settings.get("gli_user_token", NO_TOKEN)
 
 #Update settings from file
 def _check_settings():
-	global settings #= sublime.load_settings('GitlabIntegrate.sublime-settings')
+	global settings
 	settings = sublime.load_settings('GitlabIntegrate.sublime-settings')
 
 	global project_host
@@ -31,12 +36,6 @@ def _check_settings():
 	new_host=settings.get("gli_project_host", NO_HOST)
 	new_id=settings.get("gli_project_id", 0) 
 	new_token= settings.get("gli_user_token", NO_TOKEN)
-
-	#Debug
-	print("###" + str(new_host))
-	print("###" + str(new_id))
-	print("###" + str(new_token))
-	#/Debug
 
 	#Reconnect to Gitlab if settings changed
 	if new_host != "project_host" or new_token != "user_token":
@@ -57,19 +56,23 @@ def _check_settings():
 class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
 	def run(self, command):
 		_check_settings()
-		if command == "create_issue":
-			self.window.run_command("gli_prompt_create_issue")
-		elif command == "edit_issue":
-			self.window.run_command("gli_prompt_edit_issue")
-		elif command == "assign_issue":
-			self.window.run_command("gli_prompt_assign_issue")
-		elif command == "label_issue":
-			self.window.run_command("gli_prompt_label_issue")
-		elif command == "change_project":
-			self.window.run_command("gli_prompt_change_project")
-		elif command == "get_project_ids":
-			self.window.run_command("gli_get_project_ids")
-		pass
+		display_intro = settings.get("gli_display_intro", True)
+
+		if not display_intro:
+			if command == "create_issue":
+				self.window.run_command("gli_prompt_create_issue")
+			elif command == "edit_issue":
+				self.window.run_command("gli_prompt_edit_issue")
+			elif command == "assign_issue":
+				self.window.run_command("gli_prompt_assign_issue")
+			elif command == "label_issue":
+				self.window.run_command("gli_prompt_label_issue")
+			elif command == "change_project":
+				self.window.run_command("gli_prompt_change_project")
+			elif command == "get_project_ids":
+				self.window.run_command("gli_get_project_ids")
+		else:
+			self.show_intro()
 
 class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 	def run(self):
@@ -134,9 +137,7 @@ class GliCreateIssueCommand(sublime_plugin.ApplicationCommand):
 
 		if not git.createissue(project_id, title=title, description=desc,
 			assignee_id=assign_to, milestone_id=milestone, labels=labels):
-			err = "ERROR: issue not created"
-			print(err)
-			sublime.status_message(err)
+			_status_print(ERR_NOT_CREATED)
 			return False
 		else:
 			sublime.status_message("new issue created")
@@ -171,16 +172,12 @@ class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 		elif not str(assign_to).isdigit():
 			assign_to = _username_to_id(assign_to)
 			if assign_to == False:
-				err = "ERROR: issue not edited"
-				print(err)
-				sublime.status_message(err)
+				_status_print(ERR_NOT_EDITED)
 				return False
 		
 		if not git.editissue(project_id, issue_id, title=title, description=desc,
 			assignee_id=assign_to, milestone_id=milestone, labels=labels, state_event=state):
-			err = "ERROR: issue not edited"
-			print(err)
-			sublime.status_message(err)
+			_status_print(ERR_NOT_EDITED)
 			return False
 		else:
 			sublime.status_message("issue edited")
@@ -210,9 +207,7 @@ class GliAssignIssueCommand(sublime_plugin.ApplicationCommand):
 			assign_to = _username_to_id(assign_to)
 
 		if assign_to == False or (not git.editissue(project_id, issue_id, assignee_id=assign_to)):
-			err = "ERROR: issue not assigned"
-			print(err)
-			sublime.status_message(err)			
+			_status_print(ERR_NOT_ASSIGNED)		
 			return False
 		else:
 			sublime.status_message("issue assigned")
@@ -241,9 +236,7 @@ class GliLabelIssueCommand(sublime_plugin.ApplicationCommand):
 		labels = ", ".join(issue["labels"])
 		
 		if not git.editissue(project_id, issue_id, labels=labels):
-			err = "ERROR: labels not added"
-			print(err)
-			sublime.status_message(err)
+			_status_print(ERR_NOT_LABELED)
 			return False
 		else:
 			sublime.status_message("labels added")
@@ -295,9 +288,7 @@ def _issue_iid_to_id(iid, proj_id=project_id):
 			issue_id = issue["id"]
 			return issue_id
 
-	err = "Issue " + iid + " not found"
-	print(err)
-	sublime.error_message(err)
+	_status_print(ERR_NOT_FOUND(iid))
 	return False
 
 #Get a user's ID from their username
@@ -309,9 +300,7 @@ def _username_to_id(username):
 			user_id = user["id"]
 			return user_id
 
-	err = "User " + username + " not found."
-	print(err)
-	sublime.status_message(err)
+	_status_print(ERR_NOT_FOUND(username))
 	return False
 
 #Handles keyword arguments, returns a dict of argname:value pairs
@@ -362,36 +351,3 @@ def _process_label_arguments(arguments):
 def _status_print(message):
 	print(message)
 	sublime.status_message(message)
-
-
-	
-
-intro_text = """Thank you for installing GitlabIntegrate!
-
-GitlabIntegrate functions can be accessed via the menu (Tools -> GitlabIntegrate) or with a keyboard shortcut (Ctrl+Shift+X (Windows/Linux), Cmd+Shift+X (Mac))
-
-Before using GitlabIntegrate, you should configure the User Settings file. User settings can be found 3 ways (you may need to create the file if it doesn't exist):
-	1. Via the menu at 
-		Preferences -> Package Settings -> Gitlab Integrate -> Settings - User
-	2. Via the menu at
-		Tools -> Gitlab Integrate -> Access User Settings
-	3. Via file browser at
-		[sublime installation directory]/Packages/User/GitlabIntegrate.sublime-settings 
-
-Then, copy and paste the following text into the file (replacing any text already there), editing the necessary fields:
-{
-	//Displays the intro document on startup
-	"gli_display_intro": false,
-
-	//Your Gitlab host
-	"gli_project_host": "",
-
-	//Your Gitlab user token, found at [host]/profile/account 
-	"gli_user_token": "",
-
-	/*
-	The default project ID.
-	This can be found by running GitlabIntegrate's "Get Project IDs" command after configuring your host and user_token. All the projects you have access to should be listed with their IDs.
-	*/
-	"gli_project_id": 0
-}"""
