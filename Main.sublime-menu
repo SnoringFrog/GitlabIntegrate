@@ -12,12 +12,12 @@
         "mnemonic": "g",
         "children":
         [
-          {"command": "gli_prompt_create_issue",  "caption": "Create Issue" },
-          {"command": "gli_prompt_edit_issue",  "caption": "Edit Issue" },
-          {"command": "gli_prompt_assign_issue",  "caption": "Assign Issue" },
-          {"command": "gli_prompt_label_issue",  "caption": "Add Label(s) To Issue" },
-          {"command": "gli_prompt_change_project",  "caption": "Change Project ID" },
-          {"command": "gli_get_project_ids",  "caption": "Get Project IDs" },
+          {"command": "gli_toolbar_menu", "caption": "Create Issue", "args": {"command":"create_issue"} },
+          {"command": "gli_toolbar_menu", "caption": "Edit Issue", "args": {"command":"edit_issue"}  },
+          {"command": "gli_toolbar_menu", "caption": "Assign Issue", "args": {"command":"assign_issue"}  },
+          {"command": "gli_toolbar_menu", "caption": "Add Label(s) To Issue", "args": {"command":"label_issue"} },
+          {"command": "gli_toolbar_menu", "caption": "Change Project ID", "args": {"command":"change_project"} },
+          {"command": "gli_toolbar_menu", "caption": "Get Project IDs", "args": {"command":"get_project_ids"} },
           {"command": "open_file", "args": {"file": "${packages}/User/GitlabIntegrate.sublime-settings"}, "caption": "Access User Settings"}
         ]
       }

@@ -1,7 +1,6 @@
 import sublime, sublime_plugin
 import os, sys, inspect
 
-
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"dependencies")))
 if cmd_subfolder not in sys.path:
 	sys.path.insert(0, cmd_subfolder)
@@ -16,8 +15,15 @@ NO_TOKEN = "token not set"
 ERR_PREFIX = "ERROR: "
 ERR_COULD_NOT_CONNECT = ERR_PREFIX + "Host or Token not set, could not connect to Gitlab"
 
+project_host=settings.get("gli_project_host", NO_HOST)
+project_id=settings.get("gli_project_id", 0) 
+user_token= settings.get("gli_user_token", NO_TOKEN)
+
 #Update settings from file
 def _check_settings():
+	global settings #= sublime.load_settings('GitlabIntegrate.sublime-settings')
+	settings = sublime.load_settings('GitlabIntegrate.sublime-settings')
+
 	global project_host
 	global project_id
 	global user_token
@@ -25,6 +31,12 @@ def _check_settings():
 	new_host=settings.get("gli_project_host", NO_HOST)
 	new_id=settings.get("gli_project_id", 0) 
 	new_token= settings.get("gli_user_token", NO_TOKEN)
+
+	#Debug
+	print("###" + str(new_host))
+	print("###" + str(new_id))
+	print("###" + str(new_token))
+	#/Debug
 
 	#Reconnect to Gitlab if settings changed
 	if new_host != "project_host" or new_token != "user_token":
@@ -41,7 +53,23 @@ def _check_settings():
 	user_token = new_token
 
 	_status_print("gli_project_id:" + str(project_id))
-_check_settings()
+
+class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
+	def run(self, command):
+		_check_settings()
+		if command == "create_issue":
+			self.window.run_command("gli_prompt_create_issue")
+		elif command == "edit_issue":
+			self.window.run_command("gli_prompt_edit_issue")
+		elif command == "assign_issue":
+			self.window.run_command("gli_prompt_assign_issue")
+		elif command == "label_issue":
+			self.window.run_command("gli_prompt_label_issue")
+		elif command == "change_project":
+			self.window.run_command("gli_prompt_change_project")
+		elif command == "get_project_ids":
+			self.window.run_command("gli_get_project_ids")
+		pass
 
 class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 	def run(self):
@@ -243,13 +271,15 @@ class GliGetProjectIdsCommand(sublime_plugin.WindowCommand):
 		for proj in projects:
 			projects_list.append(str(proj["name"]) + ": " + str(proj["id"]))
 		
-		projects_list.sort()
-
-		self.window.show_quick_panel(projects_list, self.on_done)
+		projects_list.sort()		
 
 		print("")
 		for proj in projects_list:
 			print(proj)
+
+		#Timeout only needed for Sublime 3
+		sublime.set_timeout(lambda: self.window.show_quick_panel(projects_list, self.on_done), 10)
+		#self.window.show_quick_panel(projects_list, self.on_done) #this works for ST2
 
 	def on_done(self, index):
 		pass
