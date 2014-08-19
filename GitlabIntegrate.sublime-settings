@@ -11,7 +11,7 @@
 	*/
 
 	//The project host
-	"gli_project_host":"Please set a host in User Settings",
+	"gli_project_host":"host not set",
 
 	/*
 	The default project ID.
@@ -21,7 +21,7 @@
 	"gli_project_id": 0,
 
 	//Your user token for GitLab, found in [host]/profile/account 
-	"gli_user_token":"Please set a token in User Settings",
+	"gli_user_token":"token not set",
 
 	//Displays the new installation window
 	"gli_display_intro":true
