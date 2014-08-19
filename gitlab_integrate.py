@@ -77,8 +77,10 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 			self.window.run_command("gli_get_project_ids")
 
 	def startup(self, display_intro):
-		print("\nLoaded settings:\nproject_host:" + PROJECT_HOST + "\nproject_id:" + str(PROJECT_ID) + "\nuser_token:" + USER_TOKEN)
-		
+		loaded_settings = "\nLoaded settings:\nproject_host:" + PROJECT_HOST + "\nproject_id:" + str(PROJECT_ID) #+ "\nuser_token:" + USER_TOKEN
+		print(loaded_settings)
+		sublime.status_message(loaded_settings)
+
 		active_window = sublime.active_window()
 
 		if display_intro:
@@ -113,9 +115,12 @@ class GliCreateIssueCommand(sublime_plugin.ApplicationCommand):
 
 		if not git.createissue(PROJECT_ID, title=title, description=desc,
 			assignee_id=assign_to, milestone_id=milestone, labels=labels):
-			print("Error: issue not created")
+			err = "ERROR: issue not created"
+			print(err)
+			sublime.status_message(err)
 			return False
 		else:
+			sublime.status_message("new issue created")
 			return True
 
 
@@ -148,14 +153,19 @@ class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 		elif not str(assign_to).isdigit():
 			assign_to = _username_to_id(assign_to)
 			if assign_to == False:
-				print("Error: issue not edited")
+				err = "ERROR: issue not edited"
+				print(err)
+				sublime.status_message(err)
 				return False
 		
 		if not git.editissue(PROJECT_ID, issue_id, title=title, description=desc,
 			assignee_id=assign_to, milestone_id=milestone, labels=labels, state_event=state):
-			print("Error: issue not edited")
+			err = "ERROR: issue not edited"
+			print(err)
+			sublime.status_message(err)
 			return False
 		else:
+			sublime.status_message("issue edited")
 			return True
 
 
@@ -183,16 +193,18 @@ class GliAssignIssueCommand(sublime_plugin.ApplicationCommand):
 			assign_to = _username_to_id(assign_to)
 
 		if assign_to == False or (not git.editissue(PROJECT_ID, issue_id, assignee_id=assign_to)):
-			print("Error: issue not assigned")
+			err = "ERROR: issue not assigned"
+			print(err)
+			sublime.status_message(err)			
 			return False
 		else:
+			sublime.status_message("issue assigned")
 			return True
 
 
 class GliPromptLabelIssueCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		self.window.show_input_panel("Add Label(s) to Issue (iid, \"labels_1, labels_2\"):", "", self.on_done, None, None)
-		pass
 
 	def on_done(self, text):
 		dict_keys = ["issue_iid", "labels"]
@@ -212,9 +224,12 @@ class GliLabelIssueCommand(sublime_plugin.ApplicationCommand):
 		labels = ", ".join(issue["labels"])
 		
 		if not git.editissue(PROJECT_ID, issue_id, labels=labels):
-			print("Error: labels not edited")
+			err = "ERROR: labels not added"
+			print(err)
+			sublime.status_message(err)
 			return False
 		else:
+			sublime.status_message("labels added")
 			return True
 
 
@@ -222,7 +237,6 @@ class GliLabelIssueCommand(sublime_plugin.ApplicationCommand):
 class GliPromptChangeProjectCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		self.window.show_input_panel("New Project ID", "", self.on_done, None, None)
-		pass
 
 	def on_done(self, text):
 		proj_id = int(text.strip())
@@ -262,7 +276,9 @@ def _issue_iid_to_id(iid, proj_id=PROJECT_ID):
 			issue_id = issue["id"]
 			return issue_id
 
-	print("Issue " + iid + " not found")
+	err = "Issue " + iid + " not found"
+	print(err)
+	sublime.status_message(err)
 	return False
 
 #Get a user's ID from their username
@@ -274,7 +290,9 @@ def _username_to_id(username):
 			user_id = user["id"]
 			return user_id
 
-	print("User " + username + " not found.")
+	err = "User " + username + " not found."
+	print(err)
+	sublime.status_message(err)
 	return False
 
 #Handles keyword arguments, returns a dict of argname:value pairs
