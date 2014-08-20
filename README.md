@@ -30,7 +30,7 @@ Before using GitlabIntegrate, you should configure the User Settings file. If yo
 
 Then, copy and paste the following text into the file (replacing any text already there), editing the necessary fields:
 
-```json
+```javascript
 {
 	//Displays the intro document on startup
 	"gli_display_intro": false,
@@ -45,7 +45,10 @@ Then, copy and paste the following text into the file (replacing any text alread
 	The default project ID.
 	This can be found by running GitlabIntegrate's "Get Project IDs" command after configuring your host and user_token. All the projects you have access to should be listed with their IDs.
 	*/
-	"gli_project_id": 0
+	"gli_project_id": 0,
+
+	//Suppresses output of closed issues for the Select Issue command
+	"gli_hide_closed_issues":false
 }
 ```
 

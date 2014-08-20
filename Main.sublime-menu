@@ -11,15 +11,55 @@
         "id":"gitlab-integrate",
         "mnemonic": "g",
         "children":
-        [
-          {"command": "gli_toolbar_menu", "caption": "Create Issue", "args": {"command":"create_issue"} },
-          {"command": "gli_toolbar_menu", "caption": "Edit Issue", "args": {"command":"edit_issue"}  },
-          {"command": "gli_toolbar_menu", "caption": "Assign Issue", "args": {"command":"assign_issue"}  },
-          {"command": "gli_toolbar_menu", "caption": "Add Label(s) To Issue", "args": {"command":"label_issue"} },
-          {"command": "gli_toolbar_menu", "caption": "Get Issues", "args": {"command":"select_issue"} },
-          {"command": "gli_toolbar_menu", "caption": "Input Project ID", "args": {"command":"input_project"} },
-          {"command": "gli_toolbar_menu", "caption": "Select Project ID", "args": {"command":"select_project"} },
-          {"command": "open_file", "args": {"file": "${packages}/User/GitlabIntegrate.sublime-settings"}, "caption": "Access User Settings"}
+        [ //commands
+          { 
+            "command": "gli_toolbar_menu", 
+            "caption": "Create Issue", 
+            "args": {"command":"create_issue"} 
+          },
+          {
+            "command": "gli_toolbar_menu",
+            "caption": "Edit Issue",
+            "args": {"command":"edit_issue"}
+          },
+          {
+            "command": "gli_toolbar_menu",
+            "caption": "Assign Issue", 
+            "args": {"command":"assign_issue"}  
+          },
+          {
+            "command": "gli_toolbar_menu", 
+            "caption": "Add Label(s) To Issue", 
+            "args": {"command":"label_issue"} 
+          },
+          {
+            "command": "gli_toolbar_menu", 
+            "caption": "Get Issues", 
+            "args": {"command":"select_issue"} 
+          },
+          {
+            "command": "gli_toolbar_menu", 
+            "caption": "Input Project ID", 
+            "args": {"command":"input_project"} 
+          },
+          {
+            "command": "gli_toolbar_menu", 
+            "caption": "Select Project ID", 
+            "args": {"command":"select_project"} 
+          },
+          {"caption":"-"},
+          //settings
+          {
+            "command": "toggle_setting",
+            "caption": "Hide Closed Issues from Get Issues", 
+            "args": {"setting": "gli_hide_closed_issues"},
+            "checkbox": true  
+          },
+          {
+            "command": "open_file",
+            "caption": "Access User Settings", 
+            "args": {"file": "${packages}/User/GitlabIntegrate.sublime-settings"}
+          }
         ]
       }
     ]

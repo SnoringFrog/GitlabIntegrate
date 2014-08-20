@@ -24,5 +24,8 @@
 	"gli_user_token":"token not set",
 
 	//Displays the new installation window
-	"gli_display_intro":true
+	"gli_display_intro":true,
+
+	//Suppresses output of closed issues for the Select Issue command
+	"gli_hide_closed_issues":false
 }
