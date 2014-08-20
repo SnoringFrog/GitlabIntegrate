@@ -30,7 +30,7 @@ Before using GitlabIntegrate, you should configure the User Settings file. If yo
 
 Then, copy and paste the following text into the file (replacing any text already there), editing the necessary fields:
 
-```
+```json
 {
 	//Displays the intro document on startup
 	"gli_display_intro": false,

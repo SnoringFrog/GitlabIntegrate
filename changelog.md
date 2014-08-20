@@ -1,6 +1,14 @@
 Sublime Gitlab Integration changelog
 ------------------------------------
 
+Version 1.2 - 8/20
+====================================
+-`Change Project ID` renamed `Input Project ID`
+-`Get Project IDs` replaced with `Select Project ID`
+  -`Select Project ID functions identically to Get Project IDs` but changes the current project ID if a project is selected from the list
+-`Get Issues` added
+  -Displays a list of all issues (open and closed) in the current project, sorted by state and then by iid
+
 Version 1.1 - 8/19
 ====================================
 -GLI now runs on Sublime 3.

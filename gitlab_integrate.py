@@ -7,12 +7,24 @@ if cmd_subfolder not in sys.path:
 
 import gitlab
 
-settings = sublime.load_settings('GitlabIntegrate.sublime-settings')
+#Functions with "Prompt" in the name generally display either the quick bar or the menu
+#and accept user input (although in some cases they don't do anything with that input)
 
+INTRO_TEXT_FILE = "intro_text.txt"
+
+#Settings field names
+SETTINGS_FILE = "GitlabIntegrate.sublime-settings"
+HOST_SETTING = "gli_project_host"
+ID_SETTING = "gli_project_id"
+TOKEN_SETTING = "gli_user_token"
+DISPLAY_INTRO_SETTING = "gli_display_intro"
+
+#Settings default/unset values
 NO_HOST = "host not set"
 NO_TOKEN = "token not set"
 
-ERR_PREFIX() = "ERROR: "
+#Errors
+ERR_PREFIX = "ERROR: "
 ERR_COULD_NOT_CONNECT = ERR_PREFIX + "Host or Token not set, could not connect to Gitlab"
 ERR_NOT_CREATED = ERR_PREFIX + "issue not created"
 ERR_NOT_EDITED = ERR_PREFIX + "issue not edited"
@@ -20,43 +32,15 @@ ERR_NOT_ASSIGNED = ERR_PREFIX + "issue not assigned"
 ERR_NOT_LABELED = ERR_PREFIX + "label(s) not added"
 def ERR_NOT_FOUND(item): return ERR_PREFIX + "issue {0} not found".format(item)
 
-project_host=settings.get("gli_project_host", NO_HOST)
-project_id=settings.get("gli_project_id", 0) 
-user_token= settings.get("gli_user_token", NO_TOKEN)
-
-#Update settings from file
-def _check_settings():
-	global settings
-	settings = sublime.load_settings('GitlabIntegrate.sublime-settings')
-
-	global project_host
-	global project_id
-	global user_token
-
-	new_host=settings.get("gli_project_host", NO_HOST)
-	new_id=settings.get("gli_project_id", 0) 
-	new_token= settings.get("gli_user_token", NO_TOKEN)
-
-	#Reconnect to Gitlab if settings changed
-	if new_host != "project_host" or new_token != "user_token":
-		if new_host == NO_HOST or new_token == NO_TOKEN:
-			_status_print(ERR_COULD_NOT_CONNECT)
-			settings.set("gli_display_intro", True)
-		else: 
-			global git
-			git = gitlab.Gitlab(new_host, token=new_token) #Connect with private token
-			_status_print("Reconnected to Gitlab using host " + new_host + " and token " + new_token)
-
-	project_host = new_host
-	project_id = new_id
-	user_token = new_token
-
-	_status_print("gli_project_id:" + str(project_id))
+settings = sublime.load_settings(SETTINGS_FILE)
+project_host=settings.get(HOST_SETTING, NO_HOST)
+project_id=settings.get(ID_SETTING, 0) 
+user_token= settings.get(TOKEN_SETTING, NO_TOKEN)
 
 class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
 	def run(self, command):
 		_check_settings()
-		display_intro = settings.get("gli_display_intro", True)
+		display_intro = settings.get(DISPLAY_INTRO_SETTING, True)
 
 		if not display_intro:
 			if command == "create_issue":
@@ -67,10 +51,12 @@ class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
 				self.window.run_command("gli_prompt_assign_issue")
 			elif command == "label_issue":
 				self.window.run_command("gli_prompt_label_issue")
-			elif command == "change_project":
-				self.window.run_command("gli_prompt_change_project")
-			elif command == "get_project_ids":
-				self.window.run_command("gli_get_project_ids")
+			elif command == "select_issue":
+				self.window.run_command("gli_prompt_select_issue")
+			elif command == "input_project":
+				self.window.run_command("gli_prompt_input_project")
+			elif command == "select_project":
+				self.window.run_command("gli_prompt_select_project")
 		else:
 			self.show_intro()
 
@@ -78,30 +64,23 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		_check_settings()
 
-		display_intro = settings.get("gli_display_intro", True)
+		display_intro = settings.get(DISPLAY_INTRO_SETTING, True)
 
 		if not display_intro:
 			ACTIONS = ["Create Issue", "Edit Issue", "Assign Issue", "Add Label(s) To Issue", 
-			"Change Project ID", "Get Project IDs"]
+			"Get Issues", "Input Project ID", "Select Project ID"]
 			self.window.show_quick_panel(ACTIONS, self.on_done)
 		else:
 			self.show_intro()
 
 	def show_intro(self):
 		#Sublime 2 & 3
-		intro_view = self.window.open_file("intro_text.txt")
+		intro_view = self.window.open_file(INTRO_TEXT_FILE)
 		intro_view.set_scratch(True)
 		intro_view.set_read_only(True)
-		
-		#Sublime 2 only
-		#new_view = active_window.new_file()
-		#new_view.set_scratch(True)
-		#edit = new_view.begin_edit("test", "a")
-		#new_view.insert(edit, 0, intro_text)
-		#new_view.end_edit(edit)
 
-		settings.set("gli_display_intro", False)
-		sublime.save_settings("GitlabIntegrate.sublime-settings")
+		settings.set(DISPLAY_INTRO_SETTING, False)
+		sublime.save_settings(SETTINGS_FILE)
 
 	def on_done(self, index):
 		if index == 0:
@@ -113,9 +92,11 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 		elif index == 3:
 			self.window.run_command("gli_prompt_label_issue")
 		elif index == 4:
-			self.window.run_command("gli_prompt_change_project")
+			self.window.run_command("gli_prompt_select_issue")
 		elif index == 5:
-			self.window.run_command("gli_get_project_ids")
+			self.window.run_command("gli_prompt_input_project")
+		elif index == 6:
+			self.window.run_command("gli_prompt_select_project")
 
 
 class GliPromptCreateIssueCommand(sublime_plugin.WindowCommand):
@@ -140,7 +121,7 @@ class GliCreateIssueCommand(sublime_plugin.ApplicationCommand):
 			_status_print(ERR_NOT_CREATED)
 			return False
 		else:
-			sublime.status_message("new issue created")
+			_status_print("new issue created")
 			return True
 
 
@@ -158,7 +139,7 @@ class GliPromptEditIssueCommand(sublime_plugin.WindowCommand):
 #Edit an issue
 class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 	def run(self, iid, title="", desc="", assign_to="unused", state="", labels="", milestone=""):
-		issue_id = _issue_iid_to_id(iid, project_id)
+		issue_id = _issue_iid_to_id(iid)
 		if state == "open": state="reopen"
 		elif state == "closed": state="close"
 
@@ -180,7 +161,7 @@ class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 			_status_print(ERR_NOT_EDITED)
 			return False
 		else:
-			sublime.status_message("issue edited")
+			_status_print("issue edited")
 			return True
 
 
@@ -197,7 +178,7 @@ class GliPromptAssignIssueCommand(sublime_plugin.WindowCommand):
 #Assign an issue someone	
 class GliAssignIssueCommand(sublime_plugin.ApplicationCommand):
 	def run(self, issue_iid, assign_to):
-		issue_id = _issue_iid_to_id(issue_iid, project_id)
+		issue_id = _issue_iid_to_id(issue_iid)
 
 		if assign_to == "" or assign_to == " ": #if empty user specified, remove assignees
 			git.editissue(project_id, issue_id, assignee_id=False)
@@ -210,7 +191,7 @@ class GliAssignIssueCommand(sublime_plugin.ApplicationCommand):
 			_status_print(ERR_NOT_ASSIGNED)		
 			return False
 		else:
-			sublime.status_message("issue assigned")
+			_status_print("issue assigned")
 			return True
 
 
@@ -228,7 +209,7 @@ class GliPromptLabelIssueCommand(sublime_plugin.WindowCommand):
 #Add labels to an issue without affecting the current labels
 class GliLabelIssueCommand(sublime_plugin.ApplicationCommand):
 	def run(self, issue_iid, labels):
-		issue_id = _issue_iid_to_id(issue_iid, project_id)
+		issue_id = _issue_iid_to_id(issue_iid)
 
 		issue = git.getprojectissue(project_id, issue_id)
 
@@ -239,25 +220,58 @@ class GliLabelIssueCommand(sublime_plugin.ApplicationCommand):
 			_status_print(ERR_NOT_LABELED)
 			return False
 		else:
-			sublime.status_message("labels added")
+			_status_print("labels added")
 			return True
 
+class GliPromptSelectIssue(sublime_plugin.WindowCommand):
+	def run(self):
+		full_proj_issues = _get_all_issues()
 
-#Changes the project ID
-class GliPromptChangeProjectCommand(sublime_plugin.WindowCommand):
+		open_issues = []
+		closed_issues = []
+
+		for issue in full_proj_issues:
+			state = "-" + issue["state"][0].upper() #State flag: -O = open, -C = closed
+			title = issue["title"]
+
+			#Truncate long titles
+			max_title_width = 39 #46 minus space for stateflag and iid
+			if len(title) > max_title_width:
+				title = title[:max_title_width]
+
+			issue_string = "{iid:3}:{title:{title_width}} {state}".format(
+				iid=issue["iid"], title=title, title_width=max_title_width, state=state)
+
+			if state == "-O":
+				open_issues.append(issue_string)
+			elif state == "-C":
+				closed_issues.append(issue_string)
+
+		open_issues.sort(key=lambda issue: issue.split(":")[0])
+		closed_issues.sort(key=lambda issue: issue.split(":")[0])
+
+		full_proj_issues = open_issues + closed_issues
+
+		for issue in full_proj_issues:
+			print(issue)
+		sublime.set_timeout(lambda: self.window.show_quick_panel(full_proj_issues,  self.on_done, sublime.MONOSPACE_FONT), 10)
+
+	def on_done(self, index):
+		#(Eventually) open a view to edit the issue
+		pass
+
+		
+#Changes the project ID via input bar
+class GliPromptInputProjectCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		self.window.show_input_panel("New Project ID", "", self.on_done, None, None)
 
 	def on_done(self, text):
-		proj_id = int(text.strip())
-		global project_id
-		project_id=proj_id
+		sublime.run_command("gli_change_project", {"proj_id":text})
 
-		settings.set("gli_project_id", proj_id)
-		sublime.save_settings("GitlabIntegrate.sublime-settings")
-
-#Displays all projects the user has access to with their IDs
-class GliGetProjectIdsCommand(sublime_plugin.WindowCommand):
+#Displays all projects the user has access to with their IDs, allowing user to select which id to use
+class GliPromptSelectProjectCommand(sublime_plugin.WindowCommand):
+	projects_list = []
 	def run(self):
 		projects = git.getprojects()
 		projects_list = []
@@ -271,17 +285,29 @@ class GliGetProjectIdsCommand(sublime_plugin.WindowCommand):
 			print(proj)
 
 		#Timeout only needed for Sublime 3
-		sublime.set_timeout(lambda: self.window.show_quick_panel(projects_list, self.on_done), 10)
-		#self.window.show_quick_panel(projects_list, self.on_done) #this works for ST2
+		sublime.set_timeout(lambda: self.window.show_quick_panel(projects_list,  lambda index: self.on_done(index, projects_list)), 10)
+		#self.window.show_quick_panel(projects_list, lambda index: self.on_done(index, projects_list)) #this works for ST2
 
-	def on_done(self, index):
-		pass
+	def on_done(self, index, projects_list):
+		proj_id = projects_list[index].split(": ")[1]
+		sublime.run_command("gli_change_project", {"proj_id":proj_id})
 
 
-########################
+class GliChangeProjectCommand(sublime_plugin.ApplicationCommand):
+	def run(self, proj_id):
+		proj_id = int(proj_id.strip())
+		global project_id
+		project_id=proj_id
+
+		_status_print("new project_id: " + str(proj_id))
+
+		settings.set(ID_SETTING, proj_id)
+		sublime.save_settings(SETTINGS_FILE)
+
+######################## Various support functions
 #Get an issue's ID from its IID (ID is an absolute value, IID is relative to a project)
-def _issue_iid_to_id(iid, proj_id=project_id):
-	proj_issues = git.getprojectissues(proj_id)
+def _issue_iid_to_id(iid):
+	proj_issues = _get_all_issues()
 	for issue in proj_issues:
 		issue_iid = issue["iid"]
 		if (int(iid) == int(issue_iid)):
@@ -347,7 +373,51 @@ def _process_label_arguments(arguments):
 
 	return arguments
 
+#Update settings from file
+def _check_settings():
+	global settings
+	settings = sublime.load_settings(SETTINGS_FILE)
+
+	global project_host
+	global project_id
+	global user_token
+
+	new_host=settings.get(HOST_SETTING, NO_HOST)
+	new_id=settings.get(ID_SETTING, 0) 
+	new_token= settings.get(TOKEN_SETTING, NO_TOKEN)
+
+	#Reconnect to Gitlab if settings changed
+	if new_host != project_host or new_token != user_token:
+		if new_host == NO_HOST or new_token == NO_TOKEN:
+			_status_print(ERR_COULD_NOT_CONNECT)
+			settings.set(DISPLAY_INTRO_SETTING, True)
+		else: 
+			global git
+			git = gitlab.Gitlab(new_host, token=new_token) #Connect with private token
+			_status_print("Reconnected to Gitlab using host " + new_host + " and token " + new_token)
+
+	project_host = new_host
+	project_id = new_id
+	user_token = new_token
+
+	_status_print("project_id:" + str(project_id))
+
+#Returns a list of all issues
+def _get_all_issues():
+	issues = []
+	issues_page = git.getprojectissues(project_id, per_page=100)
+	
+	current_page = 1
+
+	while issues_page:
+		issues += issues_page
+		current_page+=1
+		issues_page = git.getprojectissues(project_id, page=current_page, per_page=100)
+	
+	return issues		
+
 #Outputs a status bar message and a console message
 def _status_print(message):
+	message = "[GLI]:" + message
 	print(message)
 	sublime.status_message(message)
