@@ -1,6 +1,14 @@
 Sublime Gitlab Integration changelog
 ====================================
 
+Version 1.2.1 - 8/21
+------------------------------------
+-Overhaul of the settings system; renamed all settings
+
+-Introduced ability to hide closed issues from get_issues
+
+-Fixed reoccuring bug with settings not being loaded on startup.
+
 Version 1.2 - 8/20
 ------------------------------------
 -`Change Project ID` renamed `Input Project ID`

@@ -4,37 +4,12 @@ import os, sys, inspect
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"dependencies")))
 if cmd_subfolder not in sys.path:
 	sys.path.insert(0, cmd_subfolder)
-
 import gitlab
 
 #Functions with "Prompt" in the name generally display either the quick bar or the menu
 #and accept user input (although in some cases they don't do anything with that input)
 
 INTRO_TEXT_FILE = "intro_text.txt"
-
-class settings_field_constants():
-	FILE = "GitlabIntegrate.sublime-settings"
-	HOST = "gli_project_host"
-	PROJECT = "gli_project_id"
-	TOKEN = "gli_user_token"
-	DISPLAY_INTRO = "gli_display_intro"
-	HIDE_CLOSED = "gli_hide_closed_issues"
-
-SETTINGS_FIELDS = settings_field_constants()
-
-#Settings default/unset values
-NO_HOST = "host not set"
-NO_TOKEN = "token not set"
-		
-class settings_values():
-	_file = sublime.load_settings(SETTINGS_FIELDS.FILE)
-	project_host = _file.get(SETTINGS_FIELDS.HOST, NO_HOST)
-	project_id = _file.get(SETTINGS_FIELDS.PROJECT, 0) 
-	user_token = _file.get(SETTINGS_FIELDS.TOKEN, NO_TOKEN)
-	display_intro = _file.get(SETTINGS_FIELDS.DISPLAY_INTRO, True)
-	suppress_closed_issues = _file.get(SETTINGS_FIELDS.HIDE_CLOSED, False)
-
-current_settings = settings_values()
 
 #Errors
 ERR_PREFIX = "ERROR: "
@@ -45,13 +20,73 @@ ERR_NOT_ASSIGNED = ERR_PREFIX + "issue not assigned"
 ERR_NOT_LABELED = ERR_PREFIX + "label(s) not added"
 def ERR_NOT_FOUND(item): return ERR_PREFIX + "issue {0} not found".format(item)
 
-not_connected = True
+def  plugin_loaded():
+	global settings
+	settings = Settings()
 
+class Settings:
+	constants = {
+	"FILE": "GitlabIntegrate.sublime-settings",
+	"HOST": "project_host",
+	"PROJECT": "project_id",
+	"TOKEN": "user_token",
+	"DISPLAY_INTRO": "display_intro",
+	"HIDE_CLOSED": "hide_closed_issues",
+	}
+
+	#Settings default/unset values
+	NO_HOST = "host not set"
+	NO_TOKEN = "token not set"
+
+	def __init__(self):
+		self.settings = sublime.load_settings(self.constants["FILE"])
+		self.settings.add_on_change("GitlabIntegrate-reload", self.reload_settings)
+
+		self.project_host = self.NO_HOST
+		self.user_token = self.NO_TOKEN
+
+		self.reload_settings()
+
+	def reload_settings(self):
+		print("gli:reloading settings")
+		constants = self.constants
+		old_host = self.project_host
+		old_token = self.user_token
+		self.settings = sublime.load_settings(self.constants["FILE"])
+
+		self.project_host = self.settings.get(constants["HOST"], self.NO_HOST)
+		self.project_id = self.settings.get(constants["PROJECT"], 0) 
+		self.user_token = self.settings.get(constants["TOKEN"], self.NO_TOKEN)
+		self.hide_closed_issues = self.settings.get(constants["HIDE_CLOSED"], False)
+
+		self.check_connection(old_host, old_token)
+
+		self.display_intro = self.settings.get(constants["DISPLAY_INTRO"], True)
+
+	def check_connection(self, host, token):
+		if self.project_host == self.NO_HOST or self.user_token == self.NO_TOKEN:
+			_status_print(ERR_COULD_NOT_CONNECT)
+			self.change_setting(self.constants["DISPLAY_INTRO"], True)
+			return
+		elif host != self.project_host or token != self.user_token:
+			global git
+			git = gitlab.Gitlab(self.project_host, token=self.user_token)
+			_status_print("Reconnected to Gitlab using host " + self.project_host + " and token " + self.user_token)
+
+	def change_setting(self, setting, value):
+		print("changing " + setting)
+		self.settings.set(setting, value)
+		sublime.save_settings(self.constants["FILE"])
+
+	def get_setting(self, setting):
+		return self.settings.get(setting)
+
+#Runs when any command is selected from the toolbar
 class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
 	def run(self, command):
-		_check_settings()
+		_status_print("project_id:" + str(settings.project_id))
 
-		if not current_settings.display_intro:
+		if not settings.display_intro:
 			if command == "create_issue":
 				self.window.run_command("gli_prompt_create_issue")
 			elif command == "edit_issue":
@@ -71,9 +106,9 @@ class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
 
 class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		_check_settings()
+		_status_print("project_id:" + str(settings.project_id))
 
-		if not s_display_intro:
+		if not settings.display_intro:
 			ACTIONS = ["Create Issue", "Edit Issue", "Assign Issue", "Add Label(s) To Issue", 
 			"Get Issues", "Input Project ID", "Select Project ID"]
 			self.window.show_quick_panel(ACTIONS, self.on_done)
@@ -86,8 +121,7 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 		intro_view.set_scratch(True)
 		intro_view.set_read_only(True)
 
-		current_settings._file.set(SETTINGS_FIELDS.DISPLAY_INTRO, False)
-		sublime.save_settings(SETTINGS_FIELDS.FILE)
+		settings.change_setting(settings.constants["DISPLAY_INTRO"], False)
 
 	def on_done(self, index):
 		if index == 0:
@@ -123,7 +157,7 @@ class GliCreateIssueCommand(sublime_plugin.ApplicationCommand):
 		if not assign_to.isdigit() and len(assign_to.strip())>0:
 			assign_to = _username_to_id(assign_to)
 
-		if not git.createissue(s_project_id, title=title, description=desc,
+		if not git.createissue(settings.project_id, title=title, description=desc,
 			assignee_id=assign_to, milestone_id=milestone, labels=labels):
 			_status_print(ERR_NOT_CREATED)
 			return False
@@ -218,12 +252,12 @@ class GliLabelIssueCommand(sublime_plugin.ApplicationCommand):
 	def run(self, issue_iid, labels):
 		issue_id = _issue_iid_to_id(issue_iid)
 
-		issue = git.getprojectissue(s_project_id, issue_id)
+		issue = git.getprojectissue(settings.project_id, issue_id)
 
 		issue["labels"].append(labels)
 		labels = ", ".join(issue["labels"])
 		
-		if not git.editissue(project_id, issue_id, labels=labels):
+		if not git.editissue(settings.project_id, issue_id, labels=labels):
 			_status_print(ERR_NOT_LABELED)
 			return False
 		else:
@@ -257,8 +291,12 @@ class GliPromptSelectIssue(sublime_plugin.WindowCommand):
 		open_issues.sort(key=lambda issue: issue.split(":")[0])
 		closed_issues.sort(key=lambda issue: issue.split(":")[0])
 
-		#if
-		full_proj_issues = open_issues + closed_issues
+		#Debug
+		print("###Suppression:: " + str(current_settings.suppress_closed_issues))
+		if not settings.hide_closed_issues:
+			full_proj_issues = open_issues + closed_issues
+		else:
+			full_proj_issues = open_issues
 
 		for issue in full_proj_issues:
 			print(issue)
@@ -304,13 +342,24 @@ class GliPromptSelectProjectCommand(sublime_plugin.WindowCommand):
 class GliChangeProjectCommand(sublime_plugin.ApplicationCommand):
 	def run(self, proj_id):
 		proj_id = int(proj_id.strip())
-		global s_project_id
-		s_project_id=proj_id
+		settings.change_setting(settings.constants["PROJECT"], proj_id)
 
 		_status_print("new project_id: " + str(proj_id))
 
-		current_settings._file.set(SETTINGS_FIELDS.PROJECT, proj_id)
-		sublime.save_settings(SETTINGS_FIELDS.FILE)
+#Sublime's toggle setting command wouldn't work
+class GliToggleHideClosedCommand(sublime_plugin.ApplicationCommand):
+	def run(self, setting):
+		print(settings.hide_closed_issues)
+		settings.change_setting(setting, not settings.get_setting(setting))
+
+	def is_checked(self, setting):
+		#Make sure settings are loaded
+		while not settings:	pass
+
+		if settings.get_setting(setting):
+			return True
+		else:
+			return False
 
 ######################## Various support functions
 #Get an issue's ID from its IID (ID is an absolute value, IID is relative to a project)
@@ -380,37 +429,6 @@ def _process_label_arguments(arguments):
 		del arguments[label_end_indices[0]+1:label_end_indices[1]+1]
 
 	return arguments
-
-#Update settings from file
-def _check_settings():
-	global not_connected
-	global current_settings
-
-	old_project = current_settings.project_id
-	old_host = current_settings.project_host
-	old_token = current_settings.user_token
-	
-	#Update settings; display_intro is set later because it may be changed within this function
-	current_settings.settings = sublime.load_settings(SETTINGS_FIELDS.FILE)
-	current_settings.project_host = current_settings._file.get(SETTINGS_FIELDS.HOST, NO_HOST)
-	current_settings.project_id = current_settings._file.get(SETTINGS_FIELDS.PROJECT, 0) 
-	current_settings.user_token = current_settings._file.get(SETTINGS_FIELDS.TOKEN, NO_TOKEN)
-	current_settings.suppress_closed_issues = current_settings._file.get(SETTINGS_FIELDS.HIDE_CLOSED, False)
-
-	#Reconnect to Gitlab if settings changed
-	if current_settings.project_host != old_host or current_settings.user_token != old_token or not_connected:
-		if current_settings.project_host == NO_HOST or current_settings.user_token == NO_TOKEN:
-			_status_print(ERR_COULD_NOT_CONNECT)
-			current_settings._file.set(SETTINGS_DISPLAY_INTRO, True)
-		else:
-			global git
-			git = gitlab.Gitlab(current_settings.project_host, token=current_settings.user_token) #Connect with private token
-			_status_print("Reconnected to Gitlab using host " + current_settings.project_host + " and token " + current_settings.user_token)
-			not_connected = False
-
-	current_settings.display_intro = current_settings._file.get(SETTINGS_FIELDS.DISPLAY_INTRO, True)
-
-	_status_print("project_id:" + str(project_id))
 
 
 #Returns a list of all issues

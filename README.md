@@ -33,22 +33,22 @@ Then, copy and paste the following text into the file (replacing any text alread
 ```javascript
 {
 	//Displays the intro document on startup
-	"gli_display_intro": false,
+	"display_intro": false,
 
 	//Your Gitlab host
-	"gli_project_host": "",
+	"project_host": "",
 
 	//Your Gitlab user token, found at [host]/profile/account 
-	"gli_user_token": "",
+	"user_token": "",
 
 	/*
 	The default project ID.
-	This can be found by running GitlabIntegrate's "Get Project IDs" command after configuring your host and user_token. All the projects you have access to should be listed with their IDs.
+	This can be set by running GitlabIntegrate's "Select Project ID" command after configuring your host and user_token. The project ID for the project you choose may be set from that menu.
 	*/
-	"gli_project_id": 0,
+	"project_id": 0,
 
 	//Suppresses output of closed issues for the Select Issue command
-	"gli_hide_closed_issues":false
+	"hide_closed_issues":false
 }
 ```
 

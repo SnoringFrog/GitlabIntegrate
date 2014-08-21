@@ -50,9 +50,9 @@
           {"caption":"-"},
           //settings
           {
-            "command": "toggle_setting",
-            "caption": "Hide Closed Issues from Get Issues", 
-            "args": {"setting": "gli_hide_closed_issues"},
+            "command": "gli_toggle_hide_closed",
+            "caption": "Hide Closed Issues from Get Issues",
+            "args": {"setting":"hide_closed_issues"},
             "checkbox": true  
           },
           {

@@ -11,21 +11,21 @@
 	*/
 
 	//The project host
-	"gli_project_host":"host not set",
+	"project_host":"host not set",
 
 	/*
 	The default project ID.
 	This can be found by running GitlabIntegrate's "Get Project IDs" command after configuring 
 	your host and user_token. All the projects you have access to should be listed with their IDs.
 	*/
-	"gli_project_id": 0,
+	"project_id": 0,
 
 	//Your user token for GitLab, found in [host]/profile/account 
-	"gli_user_token":"token not set",
+	"user_token":"token not set",
 
 	//Displays the new installation window
-	"gli_display_intro":true,
+	"display_intro":true,
 
 	//Suppresses output of closed issues for the Select Issue command
-	"gli_hide_closed_issues":false
+	"hide_closed_issues":false
 }
