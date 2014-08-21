@@ -48,7 +48,7 @@ class Settings:
 		self.reload_settings()
 
 	def reload_settings(self):
-		print("gli:reloading settings")
+		print("[GLI]:reloading settings")
 		constants = self.constants
 		old_host = self.project_host
 		old_token = self.user_token
@@ -184,6 +184,11 @@ class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 		if state == "open": state="reopen"
 		elif state == "closed": state="close"
 
+		#Prevent failing if state is set to what it already is
+		current_state = git.getprojectissue(settings.project_id, issue_id)["state"]
+		if (state == "reopen" and (current_state == "opened" or current_state == "reopened")) or (state == "close" and current_state == "closed"): 
+			state=""
+
 		#Not sending an "assign_to" value leaves the assignees unchanged
 		#Sending an "assign_to" value of "" erases the current assignees
 		#Other values are evaluated and resolved to a user if (if possible)
@@ -197,7 +202,7 @@ class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 				_status_print(ERR_NOT_EDITED)
 				return False
 		
-		if not git.editissue(s_project_id, issue_id, title=title, description=desc,
+		if not git.editissue(settings.project_id, issue_id, title=title, description=desc,
 			assignee_id=assign_to, milestone_id=milestone, labels=labels, state_event=state):
 			_status_print(ERR_NOT_EDITED)
 			return False
@@ -222,13 +227,13 @@ class GliAssignIssueCommand(sublime_plugin.ApplicationCommand):
 		issue_id = _issue_iid_to_id(issue_iid)
 
 		if assign_to == "" or assign_to == " ": #if empty user specified, remove assignees
-			git.editissue(s_project_id, issue_id, assignee_id=False)
+			git.editissue(settings.project_id, issue_id, assignee_id=False)
 			return True
 
 		if not str(assign_to).isdigit():
 			assign_to = _username_to_id(assign_to)
 
-		if assign_to == False or (not git.editissue(s_project_id, issue_id, assignee_id=assign_to)):
+		if assign_to == False or (not git.editissue(settings.project_id, issue_id, assignee_id=assign_to)):
 			_status_print(ERR_NOT_ASSIGNED)		
 			return False
 		else:
@@ -283,7 +288,7 @@ class GliPromptSelectIssue(sublime_plugin.WindowCommand):
 			issue_string = "{iid:3}:{title:{title_width}} {state}".format(
 				iid=issue["iid"], title=title, title_width=max_title_width, state=state)
 
-			if state == "-O":
+			if state == "-O" or state == "-R":
 				open_issues.append(issue_string)
 			elif state == "-C":
 				closed_issues.append(issue_string)
@@ -292,7 +297,7 @@ class GliPromptSelectIssue(sublime_plugin.WindowCommand):
 		closed_issues.sort(key=lambda issue: issue.split(":")[0])
 
 		#Debug
-		print("###Suppression:: " + str(current_settings.suppress_closed_issues))
+		print("###Suppression:: " + str(settings.hide_closed_issues))
 		if not settings.hide_closed_issues:
 			full_proj_issues = open_issues + closed_issues
 		else:
@@ -434,14 +439,14 @@ def _process_label_arguments(arguments):
 #Returns a list of all issues
 def _get_all_issues():
 	issues = []
-	issues_page = git.getprojectissues(current_settings.project_id, per_page=100)
+	issues_page = git.getprojectissues(settings.project_id, per_page=100)
 	
 	current_page = 1
 
 	while issues_page:
 		issues += issues_page
 		current_page+=1
-		issues_page = git.getprojectissues(current_settings.project_id, page=current_page, per_page=100)
+		issues_page = git.getprojectissues(settings.project_id, page=current_page, per_page=100)
 	
 	return issues		
 
