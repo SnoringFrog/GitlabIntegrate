@@ -1,5 +1,5 @@
 import sublime, sublime_plugin
-import os, sys, inspect
+import os, sys, inspect, re
 
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"dependencies")))
 if cmd_subfolder not in sys.path:
@@ -10,6 +10,7 @@ import gitlab
 #and accept user input (although in some cases they don't do anything with that input)
 
 INTRO_TEXT_FILE = "intro_text.txt"
+COMMA_PLACEHOLDER = ";;;" #used to handle escaped commas
 
 #Errors
 ERR_PREFIX = "ERROR: "
@@ -18,7 +19,7 @@ ERR_NOT_CREATED = ERR_PREFIX + "issue not created"
 ERR_NOT_EDITED = ERR_PREFIX + "issue not edited"
 ERR_NOT_ASSIGNED = ERR_PREFIX + "issue not assigned"
 ERR_NOT_LABELED = ERR_PREFIX + "label(s) not added"
-def ERR_NOT_FOUND(item): return ERR_PREFIX + "issue {0} not found".format(item)
+def ERR_NOT_FOUND(item): return ERR_PREFIX + '"{0}"" not found'.format(item)
 
 def  plugin_loaded():
 	global settings
@@ -395,7 +396,7 @@ def _username_to_id(username):
 #	should be run after _process_label_arguments if labels are included
 def _process_keyword_arguments(arguments, dict_keys):
 	if not isinstance(arguments, list):
-		arguments = arguments.split(",")
+		arguments = arguments.replace("/,", "&comma;").split(",")
 
 	arg_dict = {}
 	nonkeyword_args = []
@@ -422,7 +423,7 @@ def _process_keyword_arguments(arguments, dict_keys):
 #Ensures labels are handled as one argument, returns a list of arguments
 def _process_label_arguments(arguments):
 	if not isinstance(arguments, list):
-		arguments = arguments.split(",")
+		arguments = arguments.replace("/,", "&comma;").split(",")
 
 	label_end_indices = [] #indices of the first and last label
 	for arg in arguments:

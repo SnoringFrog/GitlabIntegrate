@@ -9,6 +9,8 @@ Version 1.2.1 - 8/21
 
 -Fixed reoccuring bug with settings not being loaded on startup.
 
+-Commas can now be included in fields if escaped with /
+
 Version 1.2 - 8/20
 ------------------------------------
 -`Change Project ID` renamed `Input Project ID`
