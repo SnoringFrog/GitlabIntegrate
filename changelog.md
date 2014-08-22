@@ -5,13 +5,17 @@ Verstion 1.2.2 - 8/22
 ------------------------------------
 -All settings except `display_intro` now check for values in .sublime-project files first
 
--`output_prefix` setting added (default value="[GLI]:), all outputs now prefixed
+-`output_prefix` setting added (default value="[GLI]:"), all outputs now prefixed
+
+-All commands now available in the Command Palette
+
+  -Command Palette commands all begin with "GLI:"
 
 Version 1.2.1 - 8/22
 ------------------------------------
--Overhaul of the settings system; renamed all settings
+-Overhaul of the settings system; renamed all settings _This means if you're upgrading from a pre-1.2.1 version your user settings file will no longer work_
 
--Introduced ability to hide closed issues from get_issues
+-Introduced ability to hide closed issues from `get_issues`
 
 -Fixed reoccuring bug with settings not being loaded on startup.
 

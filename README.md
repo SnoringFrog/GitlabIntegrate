@@ -58,6 +58,6 @@ Then, copy and paste the following text into the file (replacing any text alread
 
 Usage
 ------
-GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrate`) or with a keyboard shortcut (`Ctrl+Shift+X` (Windows/Linux), `Cmd+Shift+X` (Mac))
+GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrate`), with a keyboard shortcut (`Ctrl+Shift+X` (Windows/Linux), `Cmd+Shift+X` (Mac)), or via the Command Palette (default: `Cmd+Shift+P` on Mac). All GLI commands in the command palette begin with "GLI:".
 
 **Note:** commas (,), equals signs (=), and double quotes (") in titles/decsrciptions must be escaped with a forard slash (/)

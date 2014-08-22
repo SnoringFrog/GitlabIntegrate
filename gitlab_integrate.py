@@ -497,8 +497,14 @@ def _multi_replace(text, replacements):
 #Outputs a status bar message and a console message
 def _status_print(message):
 	_print(message)
-	sublime.status_message(OUTPUT_PREFIX + " " + message)
+	if len(OUTPUT_PREFIX) > 0:
+		sublime.status_message(OUTPUT_PREFIX + " " + message)
+	else:
+		sublime.status_message(message)
 
 #Prepends outputs with OUTPUT_PREFIX
 def _print(*args, **kwargs):
-	print(OUTPUT_PREFIX, *args, **kwargs)
+	if len(OUTPUT_PREFIX) > 0:
+		print(OUTPUT_PREFIX, *args, **kwargs)
+	else: 
+		print(*args, **kwargs)
