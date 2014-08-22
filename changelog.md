@@ -9,7 +9,7 @@ Version 1.2.1 - 8/22
 
 -Fixed reoccuring bug with settings not being loaded on startup.
 
--Commas and equals signs can now be included in fields if escaped with /
+-Commas, equals signs, and double quotes can now be included in fields if escaped with /
 
 -`Select Project ID` now supports listing all projects, regardless of how many there are (previous limit was 20)
 

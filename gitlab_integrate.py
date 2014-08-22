@@ -10,6 +10,7 @@ import gitlab
 #and accept user input (although in some cases they don't do anything with that input)
 
 INTRO_TEXT_FILE = "intro_text.txt"
+ESCAPE_CHARS = {"/,":"&comma;", "/=":"&equals;", '/"':"&quot;"}
 
 #Errors
 ERR_PREFIX = "ERROR: "
@@ -398,7 +399,7 @@ def _username_to_id(username):
 #	should be run after _process_label_arguments if labels are included
 def _process_keyword_arguments(arguments, dict_keys):
 	if not isinstance(arguments, list):
-		arguments = arguments.replace("/,", "&comma;").replace("/=", "&equals;").split(",")
+		arguments = _multi_replace(arguments, ESCAPE_CHARS).split(",").split(",")
 
 	arg_dict = {}
 	nonkeyword_args = []
@@ -425,7 +426,7 @@ def _process_keyword_arguments(arguments, dict_keys):
 #Ensures labels are handled as one argument, returns a list of arguments
 def _process_label_arguments(arguments):
 	if not isinstance(arguments, list):
-		arguments = arguments.replace("/,", "&comma;").replace("/=", "&equals;").split(",")
+		arguments = _multi_replace(arguments, ESCAPE_CHARS).split(",")
 
 	label_end_indices = [] #indices of the first and last label
 	for arg in arguments:
@@ -466,6 +467,11 @@ def _get_all_projects():
 		projects_page = git.getprojects(page=current_page, per_page=100)
 		
 	return projects
+
+def _multi_replace(text, replacements):
+    for key in replacements:
+        text = text.replace(key, replacements[key])
+    return text
 
 #Outputs a status bar message and a console message
 def _status_print(message):

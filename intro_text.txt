@@ -13,6 +13,8 @@ Basic Usage
 -----------
 GitlabIntegrate functions can be accessed via the menu (Tools -> GitlabIntegrate) or with a keyboard shortcut (Ctrl+Shift+X (Windows/Linux), Cmd+Shift+X (Mac))
 
+Note: commas (,), equals signs (=), and double quotes (") in titles/decrciptions must be escaped with a forard slash (/)
+
 Configuration
 -------------
 Before using GitlabIntegrate, you should configure the User Settings file. User settings can be found 3 ways (you may need to create the file if it doesn't exist):

@@ -55,3 +55,5 @@ Then, copy and paste the following text into the file (replacing any text alread
 Usage
 ------
 GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrate`) or with a keyboard shortcut (`Ctrl+Shift+X` (Windows/Linux), `Cmd+Shift+X` (Mac))
+
+**Note: commas (,), equals signs (=), and double quotes (") in titles/decrciptions must be escaped with a forard slash (/)**
