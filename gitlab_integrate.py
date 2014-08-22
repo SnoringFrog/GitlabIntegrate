@@ -10,7 +10,6 @@ import gitlab
 #and accept user input (although in some cases they don't do anything with that input)
 
 INTRO_TEXT_FILE = "intro_text.txt"
-COMMA_PLACEHOLDER = ";;;" #used to handle escaped commas
 
 #Errors
 ERR_PREFIX = "ERROR: "
@@ -50,6 +49,9 @@ class Settings:
 
 	def reload_settings(self):
 		print("[GLI]:reloading settings")
+
+		#Check for project-specific settings
+
 		constants = self.constants
 		old_host = self.project_host
 		old_token = self.user_token
@@ -325,7 +327,7 @@ class GliPromptInputProjectCommand(sublime_plugin.WindowCommand):
 class GliPromptSelectProjectCommand(sublime_plugin.WindowCommand):
 	projects_list = []
 	def run(self):
-		projects = git.getprojects()
+		projects = _get_all_projects()
 		projects_list = []
 		for proj in projects:
 			projects_list.append(str(proj["name"]) + ": " + str(proj["id"]))
@@ -396,7 +398,7 @@ def _username_to_id(username):
 #	should be run after _process_label_arguments if labels are included
 def _process_keyword_arguments(arguments, dict_keys):
 	if not isinstance(arguments, list):
-		arguments = arguments.replace("/,", "&comma;").split(",")
+		arguments = arguments.replace("/,", "&comma;").replace("/=", "&equals;").split(",")
 
 	arg_dict = {}
 	nonkeyword_args = []
@@ -423,7 +425,7 @@ def _process_keyword_arguments(arguments, dict_keys):
 #Ensures labels are handled as one argument, returns a list of arguments
 def _process_label_arguments(arguments):
 	if not isinstance(arguments, list):
-		arguments = arguments.replace("/,", "&comma;").split(",")
+		arguments = arguments.replace("/,", "&comma;").replace("/=", "&equals;").split(",")
 
 	label_end_indices = [] #indices of the first and last label
 	for arg in arguments:
@@ -449,7 +451,21 @@ def _get_all_issues():
 		current_page+=1
 		issues_page = git.getprojectissues(settings.project_id, page=current_page, per_page=100)
 	
-	return issues		
+	return issues	
+
+#Returns a list of all projects
+def _get_all_projects():
+	projects = []
+	projects_page = git.getprojects(per_page=100)
+
+	current_page = 1
+
+	while  projects_page:
+		projects += projects_page
+		current_page += 1
+		projects_page = git.getprojects(page=current_page, per_page=100)
+		
+	return projects
 
 #Outputs a status bar message and a console message
 def _status_print(message):

@@ -1,7 +1,7 @@
 Sublime Gitlab Integration changelog
 ====================================
 
-Version 1.2.1 - 8/21
+Version 1.2.1 - 8/22
 ------------------------------------
 -Overhaul of the settings system; renamed all settings
 
@@ -9,7 +9,9 @@ Version 1.2.1 - 8/21
 
 -Fixed reoccuring bug with settings not being loaded on startup.
 
--Commas can now be included in fields if escaped with /
+-Commas and equals signs can now be included in fields if escaped with /
+
+-`Select Project ID` now supports listing all projects, regardless of how many there are (previous limit was 20)
 
 Version 1.2 - 8/20
 ------------------------------------
