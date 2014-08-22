@@ -1,6 +1,12 @@
 Sublime Gitlab Integration changelog
 ====================================
 
+Verstion 1.2.2 - 8/22
+------------------------------------
+-All settings except `display_intro` now check for values in .sublime-project files first
+
+-`output_prefix` setting added (default value="[GLI]:), all outputs now prefixed
+
 Version 1.2.1 - 8/22
 ------------------------------------
 -Overhaul of the settings system; renamed all settings

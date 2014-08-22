@@ -9,8 +9,14 @@ import gitlab
 #Functions with "Prompt" in the name generally display either the quick bar or the menu
 #and accept user input (although in some cases they don't do anything with that input)
 
+#_print() is used for messages that go only to the console; _status_print() also goes
+#to the status bar. Both are prefixed by OUTPUT_PREFIX
+
+#settings.reload_settings() should be called at any plugin entry point
+
 INTRO_TEXT_FILE = "intro_text.txt"
 ESCAPE_CHARS = {"/,":"&comma;", "/=":"&equals;", '/"':"&quot;"}
+OUTPUT_PREFIX = "[GLI]:" #May be overridden by user settings
 
 #Errors
 ERR_PREFIX = "ERROR: "
@@ -19,7 +25,7 @@ ERR_NOT_CREATED = ERR_PREFIX + "issue not created"
 ERR_NOT_EDITED = ERR_PREFIX + "issue not edited"
 ERR_NOT_ASSIGNED = ERR_PREFIX + "issue not assigned"
 ERR_NOT_LABELED = ERR_PREFIX + "label(s) not added"
-def ERR_NOT_FOUND(item): return ERR_PREFIX + '"{0}"" not found'.format(item)
+def ERR_NOT_FOUND(item): return ERR_PREFIX + 'issue/user "{0}"" not found'.format(item)
 
 def  plugin_loaded():
 	global settings
@@ -28,11 +34,12 @@ def  plugin_loaded():
 class Settings:
 	constants = {
 	"FILE": "GitlabIntegrate.sublime-settings",
-	"HOST": "project_host",
-	"PROJECT": "project_id",
-	"TOKEN": "user_token",
 	"DISPLAY_INTRO": "display_intro",
 	"HIDE_CLOSED": "hide_closed_issues",
+	"HOST": "project_host",
+	"OUTPUT_PREFIX": "output_prefix",
+	"PROJECT": "project_id",
+	"TOKEN": "user_token"	
 	}
 
 	#Settings default/unset values
@@ -49,23 +56,31 @@ class Settings:
 		self.reload_settings()
 
 	def reload_settings(self):
-		print("[GLI]:reloading settings")
+		_print("reloading settings")
 
-		#Check for project-specific settings
+		global OUTPUT_PREFIX 
 
 		constants = self.constants
 		old_host = self.project_host
 		old_token = self.user_token
+
+		#Plugin settings
 		self.settings = sublime.load_settings(self.constants["FILE"])
 
-		self.project_host = self.settings.get(constants["HOST"], self.NO_HOST)
-		self.project_id = self.settings.get(constants["PROJECT"], 0) 
-		self.user_token = self.settings.get(constants["TOKEN"], self.NO_TOKEN)
-		self.hide_closed_issues = self.settings.get(constants["HIDE_CLOSED"], False)
+		#.sublime-project specific settings
+		self.current_file_settings = sublime.active_window().active_view().settings()
+
+		self.hide_closed_issues = self._load_setting("HIDE_CLOSED", False)
+		self.project_host = self._load_setting("HOST", self.NO_HOST)
+		self.project_id = self._load_setting("PROJECT", 0)
+		self.user_token = self._load_setting("TOKEN", self.NO_TOKEN)
+		
+		OUTPUT_PREFIX = self._load_setting("OUTPUT_PREFIX", "[GLI]:")
 
 		self.check_connection(old_host, old_token)
 
-		self.display_intro = self.settings.get(constants["DISPLAY_INTRO"], True)
+		#display_intro handled separately because it does not support .sublime-project specific values
+		self.display_intro = self.settings.get(self.constants["DISPLAY_INTRO"], True)
 
 	def check_connection(self, host, token):
 		if self.project_host == self.NO_HOST or self.user_token == self.NO_TOKEN:
@@ -78,16 +93,23 @@ class Settings:
 			_status_print("Reconnected to Gitlab using host " + self.project_host + " and token " + self.user_token)
 
 	def change_setting(self, setting, value):
-		print("changing " + setting)
+		_print("changing {0} to {1}".format(setting, value))
 		self.settings.set(setting, value)
 		sublime.save_settings(self.constants["FILE"])
 
 	def get_setting(self, setting):
 		return self.settings.get(setting)
 
+	#Attempts to load .sublime-project specific settings before loading plugin settings
+	def _load_setting(self, setting_key, default):
+		return self.current_file_settings.get(self.constants[setting_key], 
+			self.settings.get(self.constants[setting_key], default))
+
+
 #Runs when any command is selected from the toolbar
 class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
 	def run(self, command):
+		settings.reload_settings()
 		_status_print("project_id:" + str(settings.project_id))
 
 		if not settings.display_intro:
@@ -110,6 +132,7 @@ class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
 
 class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 	def run(self):
+		settings.reload_settings()
 		_status_print("project_id:" + str(settings.project_id))
 
 		if not settings.display_intro:
@@ -300,13 +323,12 @@ class GliPromptSelectIssue(sublime_plugin.WindowCommand):
 		open_issues.sort(key=lambda issue: issue.split(":")[0])
 		closed_issues.sort(key=lambda issue: issue.split(":")[0])
 
-		#Debug
-		print("###Suppression:: " + str(settings.hide_closed_issues))
 		if not settings.hide_closed_issues:
 			full_proj_issues = open_issues + closed_issues
 		else:
 			full_proj_issues = open_issues
 
+		_print()
 		for issue in full_proj_issues:
 			print(issue)
 		sublime.set_timeout(lambda: self.window.show_quick_panel(full_proj_issues,  self.on_done, sublime.MONOSPACE_FONT), 10)
@@ -335,7 +357,7 @@ class GliPromptSelectProjectCommand(sublime_plugin.WindowCommand):
 		
 		projects_list.sort()		
 
-		print("")
+		_print()
 		for proj in projects_list:
 			print(proj)
 
@@ -358,7 +380,6 @@ class GliChangeProjectCommand(sublime_plugin.ApplicationCommand):
 #Sublime's toggle setting command wouldn't work
 class GliToggleHideClosedCommand(sublime_plugin.ApplicationCommand):
 	def run(self, setting):
-		print(settings.hide_closed_issues)
 		settings.change_setting(setting, not settings.get_setting(setting))
 
 	def is_checked(self, setting):
@@ -475,6 +496,9 @@ def _multi_replace(text, replacements):
 
 #Outputs a status bar message and a console message
 def _status_print(message):
-	message = "[GLI]:" + message
-	print(message)
-	sublime.status_message(message)
+	_print(message)
+	sublime.status_message(OUTPUT_PREFIX + " " + message)
+
+#Prepends outputs with OUTPUT_PREFIX
+def _print(*args, **kwargs):
+	print(OUTPUT_PREFIX, *args, **kwargs)

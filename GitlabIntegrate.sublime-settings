@@ -10,6 +10,15 @@
 			[sublime installation directory]/Packages/User/GitlabIntegrate.sublime-settings
 	*/
 
+	//Displays the new installation window
+	"display_intro":true,
+
+	//Suppresses output of closed issues for the Select Issue command
+	"hide_closed_issues":false,
+
+	//Appears before all GitlabIntegrate outputs in the console and status bar
+	"output_prefix":"[GLI]:",
+
 	//The project host
 	"project_host":"host not set",
 
@@ -21,11 +30,5 @@
 	"project_id": 0,
 
 	//Your user token for GitLab, found in [host]/profile/account 
-	"user_token":"token not set",
-
-	//Displays the new installation window
-	"display_intro":true,
-
-	//Suppresses output of closed issues for the Select Issue command
-	"hide_closed_issues":false
+	"user_token":"token not set"	
 }

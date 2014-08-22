@@ -28,27 +28,31 @@ Before using GitlabIntegrate, you should configure the User Settings file. If yo
 
    `[sublime installation directory]/Packages/User/GitlabIntegrate.sublime-settings` 
 
-Then, copy and paste the following text into the file (replacing any text already there), editing the necessary fields:
+Then, copy and paste the following text into the file (replacing any text already there). Be sure to edit the project_host and user_token fields:
 
 ```javascript
 {
-	//Displays the intro document on startup
-	"display_intro": false,
+	//The project host
+	"project_host":"",
 
-	//Your Gitlab host
-	"project_host": "",
+	//Your user token for GitLab, found in [host]/profile/account 
+	"user_token":"",	
 
-	//Your Gitlab user token, found at [host]/profile/account 
-	"user_token": "",
+	//Displays the new installation window
+	"display_intro":false,
+
+	//Suppresses output of closed issues for the Select Issue command
+	"hide_closed_issues":false,
+
+	//Appears before all GitlabIntegrate outputs in the console and status bar
+	"output_prefix":"[GLI]:",
 
 	/*
 	The default project ID.
-	This can be set by running GitlabIntegrate's "Select Project ID" command after configuring your host and user_token. The project ID for the project you choose may be set from that menu.
+	This can be found by running GitlabIntegrate's "Get Project IDs" command after configuring 
+	your host and user_token. All the projects you have access to should be listed with their IDs.
 	*/
-	"project_id": 0,
-
-	//Suppresses output of closed issues for the Select Issue command
-	"hide_closed_issues":false
+	"project_id": 0	
 }
 ```
 
@@ -56,4 +60,4 @@ Usage
 ------
 GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrate`) or with a keyboard shortcut (`Ctrl+Shift+X` (Windows/Linux), `Cmd+Shift+X` (Mac))
 
-**Note: commas (,), equals signs (=), and double quotes (") in titles/decrciptions must be escaped with a forard slash (/)**
+**Note:** commas (,), equals signs (=), and double quotes (") in titles/decsrciptions must be escaped with a forard slash (/)
