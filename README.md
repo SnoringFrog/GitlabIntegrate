@@ -58,6 +58,24 @@ Then, copy and paste the following text into the file (replacing any text alread
 
 Usage
 ------
-GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrate`), with a keyboard shortcut (`Ctrl+Shift+X` (Windows/Linux), `Cmd+Shift+X` (Mac)), or via the Command Palette (default: `Cmd+Shift+P` on Mac). All GLI commands in the command palette begin with "GLI:".
+GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrate`), with a keyboard shortcut (`Ctrl+Shift+X` on Windows/Linux, `Cmd+Shift+X` on Mac), or via the Command Palette (default: `Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows/Linux). All GLI commands in the command palette begin with "GLI:".
 
-**Note:** commas (,), equals signs (=), and double quotes (") in titles/decsrciptions must be escaped with a forard slash (/)
+**Command Arguments**: When entering a command, arguments must be comma-separated. All potential arguments are listed to the left of the input box within parentheses. Arguments in square brackets ([]) are optional. 
+
+**Optional and Keyword Arguments**: Optional arguments may be specified as keyword arguments by prepending the argument value with its name and an unescaped equals sign (E.g., to create a new issue called "test_issue" and assign it to the user "robert" without specifying a description, you would type `test_issue, assign_to=username` into the `Create Issue` input box). If no keywords are specified, the arguments are processed left to right. 
+With the exception of labels, every argument is represented by its keyword in the prompt.
+
+**Special Notes on Arguments**:
+
+-_Labels_: 
+  -The keyword for labels is `labels`
+
+  -If specifying more than one label, you must quote the whole list (e.g., for the `Add Label(s) to Issue` command for the issue with the iid 10, `10, "first_label, second_label" or `10, labels="first_label, second_label")
+
+  -If you only specify one label, it does not matter if you quote it.
+
+  -Specifying labels in the `Edit Issue` command will _replace all current labels_ . Explicitly specifying no labels (e.g. `labels=,`) will remove all labels from the issue.
+
+-_Assign_to_: Users may be idenified by username or user_id (if you happen go know the id). GLI will automatically detect which method you've used.
+
+-_Escaped Characters_: commas (,), equals signs (=), and double quotes (") in titles/descriptions must be escaped with a forward slash (/)
