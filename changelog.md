@@ -5,6 +5,10 @@ Version 1.2.3 - 8/25
 ------------------------------------
 -Fixed issues with output_prefix breaking GLI for Sublime 2
 
+-Added documentation about commands and arguments to README.md
+
+-Added a toolbar item for the main GLI prompt so that the keyboard shortcut would be displayed in the menu
+
 Version 1.2.2 - 8/22
 ------------------------------------
 -All settings except `display_intro` now check for values in .sublime-project files first
