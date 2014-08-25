@@ -3,57 +3,57 @@ Sublime Gitlab Integration changelog
 
 Version 1.2.3 - 8/25
 ------------------------------------
--Fixed issues with output_prefix breaking GLI for Sublime 2
+- Fixed issues with output_prefix breaking GLI for Sublime 2
 
--Added documentation about commands and arguments to README.md
+- Added documentation about commands and arguments to README.md
 
--Added a toolbar item for the main GLI prompt so that the keyboard shortcut would be displayed in the menu
+- Added a toolbar item for the main GLI prompt so that the keyboard shortcut would be displayed in the menu
 
 Version 1.2.2 - 8/22
 ------------------------------------
--All settings except `display_intro` now check for values in .sublime-project files first
+- All settings except `display_intro` now check for values in .sublime-project files first
 
--`output_prefix` setting added (default value="[GLI]:"), all outputs now prefixed
+- `output_prefix` setting added (default value="[GLI]:"), all outputs now prefixed
 
--All commands now available in the Command Palette
+- All commands now available in the Command Palette
 
-  -Command Palette commands all begin with "GLI:"
+  - Command Palette commands all begin with "GLI:"
 
 Version 1.2.1 - 8/22
 ------------------------------------
--Overhaul of the settings system; renamed all settings _This means if you're upgrading from a pre-1.2.1 version your user settings file will no longer work_
+- Overhaul of the settings system; renamed all settings _This means if you're upgrading from a pre-1.2.1 version your user settings file will no longer work_
 
--Introduced ability to hide closed issues from `get_issues`
+- Introduced ability to hide closed issues from `get_issues`
 
--Fixed reoccuring bug with settings not being loaded on startup.
+- Fixed reoccuring bug with settings not being loaded on startup.
 
--Commas, equals signs, and double quotes can now be included in fields if escaped with /
+- Commas, equals signs, and double quotes can now be included in fields if escaped with /
 
--`Select Project ID` now supports listing all projects, regardless of how many there are (previous limit was 20)
+- `Select Project ID` now supports listing all projects, regardless of how many there are (previous limit was 20)
 
 Version 1.2 - 8/20
 ------------------------------------
--`Change Project ID` renamed `Input Project ID`
+- `Change Project ID` renamed `Input Project ID`
 
--`Get Project IDs` replaced with `Select Project ID`
+- `Get Project IDs` replaced with `Select Project ID`
 
-  -`Select Project ID functions identically to Get Project IDs` but changes the current project ID if a project is selected from the list
+  - `Select Project ID functions identically to Get Project IDs` but changes the current project ID if a project is selected from the list
 
--`Get Issues` added
+- `Get Issues` added
 
-  -Displays a list of all issues (open and closed) in the current project, sorted by state and then by giiid
+  - Displays a list of all issues (open and closed) in the current project, sorted by state and then by giiid
 
 Version 1.1 - 8/19
 ------------------------------------
--GLI now runs on Sublime 3.
+- GLI now runs on Sublime 3.
 
--intro_text.txt added
+- intro_text.txt added
 
--error/success messages all appear in status bar (error are also in the console)
+- error/success messages all appear in status bar (error are also in the console)
 
--settings are checked on most commands now
+- settings are checked on most commands now
 
--various internal changes, mostly to make things work in ST3
+- various internal changes, mostly to make things work in ST3
 
 Version 1.0 - 8/18
 ------------------------------------
