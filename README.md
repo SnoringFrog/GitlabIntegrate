@@ -71,7 +71,7 @@ With the exception of labels, every argument is represented by its keyword in th
 
   - The keyword for labels is `labels`
 
-  - If specifying more than one label, you must quote the whole list (e.g., for the `Add Label(s) to Issue` command for the issue with the iid 10, `10, "first_label, second_label" or `10, labels="first_label, second_label"`)
+  - If specifying more than one label, you must quote the whole list (e.g., for the `Add Label(s) to Issue` command for the issue with the iid 10, `10, "first_label, second_label"` or `10, labels="first_label, second_label"`)
 
   - If you only specify one label, it does not matter if you quote it or not.
 
