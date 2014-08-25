@@ -1,7 +1,11 @@
 Sublime Gitlab Integration changelog
 ====================================
 
-Verstion 1.2.2 - 8/22
+Version 1.2.3 - 8/25
+------------------------------------
+-Fixed issues with output_prefix breaking GLI for Sublime 2
+
+Version 1.2.2 - 8/22
 ------------------------------------
 -All settings except `display_intro` now check for values in .sublime-project files first
 

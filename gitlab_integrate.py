@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sublime, sublime_plugin
 import os, sys, inspect
 
@@ -105,6 +106,8 @@ class Settings:
 		return self.current_file_settings.get(self.constants[setting_key], 
 			self.settings.get(self.constants[setting_key], default))
 
+if sublime.version()[0] == '2':
+	settings = Settings() #for Sublime 2
 
 #Runs when any command is selected from the toolbar
 class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
@@ -505,6 +508,6 @@ def _status_print(message):
 #Prepends outputs with OUTPUT_PREFIX
 def _print(*args, **kwargs):
 	if len(OUTPUT_PREFIX) > 0:
-		print(OUTPUT_PREFIX, *args, **kwargs)
+		print(OUTPUT_PREFIX, *args)
 	else: 
 		print(*args, **kwargs)
