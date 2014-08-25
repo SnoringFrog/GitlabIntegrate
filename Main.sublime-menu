@@ -12,6 +12,11 @@
         "mnemonic": "g",
         "children":
         [ //commands
+          {
+            "command": "gli_prompt_gitlab", 
+            "caption": "Gitlab Integrate" 
+          },
+          {"caption":"-"},
           { 
             "command": "gli_toolbar_menu", 
             "caption": "Create Issue", 
