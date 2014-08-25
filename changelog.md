@@ -37,7 +37,7 @@ Version 1.2 - 8/20
 
 - `Get Project IDs` replaced with `Select Project ID`
 
-  - `Select Project ID functions identically to Get Project IDs` but changes the current project ID if a project is selected from the list
+  - `Select Project ID` functions identically to `Get Project IDs` but changes the current project ID if a project is selected from the list
 
 - `Get Issues` added
 
@@ -57,16 +57,16 @@ Version 1.1 - 8/19
 
 Version 1.0 - 8/18
 ------------------------------------
--Initial release. 
+- Initial release. 
 
--Supported features:
+- Supported features:
 
-  -Get project IDs
+  - Get project IDs
 
-  -Create Issues
+  - Create Issues
 
-  -Edit Issues
+  - Edit Issues
 
-  -Quick functions for adding labels or assigning users to an issue
+  - Quick functions for adding labels or assigning users to an issue
   
-  -Issues can be assigned to users by the user ID or username
+  - Issues can be assigned to users by the user ID or username
