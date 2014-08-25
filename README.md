@@ -67,7 +67,7 @@ With the exception of labels, every argument is represented by its keyword in th
 
 **Special Notes on Arguments**:
 
--_Labels_: 
+- *Labels*: 
   -The keyword for labels is `labels`
 
   -If specifying more than one label, you must quote the whole list (e.g., for the `Add Label(s) to Issue` command for the issue with the iid 10, `10, "first_label, second_label" or `10, labels="first_label, second_label")
@@ -76,6 +76,6 @@ With the exception of labels, every argument is represented by its keyword in th
 
   -Specifying labels in the `Edit Issue` command will _replace all current labels_ . Explicitly specifying no labels (e.g. `labels=,`) will remove all labels from the issue.
 
--_Assign_to_: Users may be idenified by username or user_id (if you happen go know the id). GLI will automatically detect which method you've used.
+- *Assign_to*: Users may be idenified by username or user_id (if you happen go know the id). GLI will automatically detect which method you've used.
 
--_Escaped Characters_: commas (,), equals signs (=), and double quotes (") in titles/descriptions must be escaped with a forward slash (/)
+- *Escaped Characters*: commas (,), equals signs (=), and double quotes (") in titles/descriptions must be escaped with a forward slash (/)
