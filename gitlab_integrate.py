@@ -1,6 +1,7 @@
 from __future__ import print_function
 import sublime, sublime_plugin
 import os, sys, inspect
+import ast
 
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"dependencies")))
 if cmd_subfolder not in sys.path:
@@ -15,9 +16,14 @@ import gitlab
 
 #settings.reload_settings() should be called at any plugin entry point
 
+#GliSelectIssueCommand() and EventDump() are a nightmare of replacements. 
+#Changes to escape characters will likely break them.
+
 INTRO_TEXT_FILE = "intro_text.txt"
-ESCAPE_CHARS = {"/,":"&comma;", "/=":"&equals;", '/"':"&quot;"}
+ESCAPE_CHARS = {"\,":"&comma;", "\=":"&equals;", '\\"':"&quot;"}
+REVERSE_ESCAPE_CHARS = {"&comma;":",", "&equals;":'=', "&quot;":'"'} 
 OUTPUT_PREFIX = "[GLI]:" #May be overridden by user settings
+EDIT_ISSUE_VIEW_NAME = "[GLI]: Editing Issue" #May be overridden by user settings
 
 #Errors
 ERR_PREFIX = "ERROR: "
@@ -36,6 +42,7 @@ class Settings:
 	constants = {
 	"FILE": "GitlabIntegrate.sublime-settings",
 	"DISPLAY_INTRO": "display_intro",
+	"EDIT_ISSUE_VIEW_NAME": "edit_issue_in_tab_name",
 	"HIDE_CLOSED": "hide_closed_issues",
 	"HOST": "project_host",
 	"OUTPUT_PREFIX": "output_prefix",
@@ -77,6 +84,7 @@ class Settings:
 		self.user_token = self._load_setting("TOKEN", self.NO_TOKEN)
 		
 		OUTPUT_PREFIX = self._load_setting("OUTPUT_PREFIX", "[GLI]:")
+		EDIT_ISSUE_VIEW_NAME = self._load_setting("EDIT_ISSUE_VIEW_NAME", "[GLI]: Editing Issue")
 
 		self.check_connection(old_host, old_token)
 
@@ -107,7 +115,7 @@ class Settings:
 			self.settings.get(self.constants[setting_key], default))
 
 if sublime.version()[0] == '2':
-	settings = Settings() #for Sublime 2
+	settings = Settings() #for Sublime 2 since it won't run plugin_loaded()
 
 #Runs when any command is selected from the toolbar
 class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
@@ -120,12 +128,12 @@ class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
 				self.window.run_command("gli_prompt_create_issue")
 			elif command == "edit_issue":
 				self.window.run_command("gli_prompt_edit_issue")
+			elif command == "edit_issue_in_tab":
+				self.window.run_command("gli_prompt_edit_issue_in_tab")
 			elif command == "assign_issue":
 				self.window.run_command("gli_prompt_assign_issue")
 			elif command == "label_issue":
 				self.window.run_command("gli_prompt_label_issue")
-			elif command == "select_issue":
-				self.window.run_command("gli_prompt_select_issue")
 			elif command == "input_project":
 				self.window.run_command("gli_prompt_input_project")
 			elif command == "select_project":
@@ -139,8 +147,8 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 		_status_print("project_id:" + str(settings.project_id))
 
 		if not settings.display_intro:
-			ACTIONS = ["Create Issue", "Edit Issue", "Assign Issue", "Add Label(s) To Issue", 
-			"Get Issues", "Input Project ID", "Select Project ID"]
+			ACTIONS = ["Create Issue", "Edit Issue (Input Bar)", "Edit Issue In Tab", "Assign Issue", "Add Label(s) To Issue", 
+			"Input Project ID", "Select Project ID"]
 			self.window.show_quick_panel(ACTIONS, self.on_done)
 		else:
 			self.show_intro()
@@ -159,11 +167,11 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 		elif index == 1:
 			self.window.run_command("gli_prompt_edit_issue")
 		elif index == 2:
-			self.window.run_command("gli_prompt_assign_issue")
+			self.window.run_command("gli_prompt_edit_issue_in_tab")
 		elif index == 3:
-			self.window.run_command("gli_prompt_label_issue")
+			self.window.run_command("gli_prompt_assign_issue")
 		elif index == 4:
-			self.window.run_command("gli_prompt_select_issue")
+			self.window.run_command("gli_prompt_label_issue")
 		elif index == 5:
 			self.window.run_command("gli_prompt_input_project")
 		elif index == 6:
@@ -211,7 +219,7 @@ class GliPromptEditIssueCommand(sublime_plugin.WindowCommand):
 class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 	def run(self, iid, title="", desc="", assign_to="unused", state="", labels="", milestone=""):
 		issue_id = _issue_iid_to_id(iid)
-		if state == "open": state="reopen"
+		if "open" in state: state="reopen"
 		elif state == "closed": state="close"
 
 		#Prevent failing if state is set to what it already is
@@ -239,6 +247,91 @@ class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 		else:
 			_status_print("issue edited")
 			return True
+
+#Opens the selected issue in a new tab for editing. 
+#EventListeners.on_pre_close() handles saving the information afterwards.
+class GliPromptEditIssueInTab(sublime_plugin.WindowCommand):
+	def run(self):
+		full_proj_issues = _get_all_issues()
+
+		open_issues = []
+		closed_issues = []
+
+		for issue in full_proj_issues:
+			state = "-" + issue["state"][0].upper() #State flag: -O = open, -R = reopened, -C = closed
+			title = issue["title"]
+
+			#Truncate long titles
+			max_title_width = 39 #46 minus space for stateflag and iid
+			if len(title) > max_title_width:
+				title = title[:max_title_width]
+
+			issue_string = "{iid:3}:{title:{title_width}} {state}".format(
+				iid=issue["iid"], title=title, title_width=max_title_width, state=state)
+
+			if state == "-O" or state == "-R":
+				open_issues.append(issue_string)
+			elif state == "-C":
+				closed_issues.append(issue_string)
+
+		open_issues.sort(key=lambda issue: issue.split(":")[0])
+		closed_issues.sort(key=lambda issue: issue.split(":")[0])
+
+		if not settings.hide_closed_issues:
+			full_proj_issues = open_issues + closed_issues
+		else:
+			full_proj_issues = open_issues
+
+		_print()
+		for issue in full_proj_issues:
+			print(issue)
+		sublime.set_timeout(lambda: self.window.show_quick_panel(full_proj_issues,  lambda index: self.on_done(index, full_proj_issues), sublime.MONOSPACE_FONT), 10)
+
+	def on_done(self, index, full_proj_issues):
+		issue_iid = full_proj_issues[index].split(":")[0]
+		self.window.active_view().run_command("gli_edit_issue_in_tab", {"issue_iid":issue_iid})
+
+class GliEditIssueInTabCommand(sublime_plugin.TextCommand):
+	def run(self, edit, issue_iid):
+		issue_id = _issue_iid_to_id(issue_iid)
+		issue = git.getprojectissue(settings.project_id, issue_id)
+		
+		active_window = sublime.active_window()
+		new_view = active_window.new_file()
+		new_view.set_name(EDIT_ISSUE_VIEW_NAME)
+		new_view.set_scratch(True) #stops save dialogues
+		new_view.set_syntax_file("Packages/JavaScript/JavaScript.tmLanguage") #Javascript is the best available default syntax for JSON	
+
+		insert_index = 0
+		human_readable_replacements = {
+		"&comma;":",", 
+		"&equals;":"=", 
+		"&quot;":'"', 
+		"\r":"", 
+		"\n":"\\n",
+		 '"':'\\"'
+		 }
+		keys_to_include = ["iid", "title", "description", "labels", "state", "milestone", "assignee"]
+		
+		for key in keys_to_include:
+			if key == "assignee":
+				if issue[key]:
+					value = '"' + str(issue[key]["username"]) + '"'
+				else:
+					value = '""'
+			elif key == "iid":
+				value = int(issue[key])
+			else:
+				value = '"' + _multi_replace(str(issue[key]), human_readable_replacements) + '"'
+				
+			insert_string = '"{key}": {val},\n'.format(key=key, val=value)
+
+			new_view.insert(edit, insert_index, insert_string)
+			insert_index += len(insert_string)
+
+		#surround with curly braces to let this be parsed as a dictionary
+		new_view.insert(edit, insert_index, "}")
+		new_view.insert(edit, 0, "{\n")
 
 
 class GliPromptAssignIssueCommand(sublime_plugin.WindowCommand):
@@ -298,48 +391,6 @@ class GliLabelIssueCommand(sublime_plugin.ApplicationCommand):
 		else:
 			_status_print("labels added")
 			return True
-
-class GliPromptSelectIssue(sublime_plugin.WindowCommand):
-	def run(self):
-		full_proj_issues = _get_all_issues()
-
-		open_issues = []
-		closed_issues = []
-
-		for issue in full_proj_issues:
-			state = "-" + issue["state"][0].upper() #State flag: -O = open, -C = closed
-			title = issue["title"]
-
-			#Truncate long titles
-			max_title_width = 39 #46 minus space for stateflag and iid
-			if len(title) > max_title_width:
-				title = title[:max_title_width]
-
-			issue_string = "{iid:3}:{title:{title_width}} {state}".format(
-				iid=issue["iid"], title=title, title_width=max_title_width, state=state)
-
-			if state == "-O" or state == "-R":
-				open_issues.append(issue_string)
-			elif state == "-C":
-				closed_issues.append(issue_string)
-
-		open_issues.sort(key=lambda issue: issue.split(":")[0])
-		closed_issues.sort(key=lambda issue: issue.split(":")[0])
-
-		if not settings.hide_closed_issues:
-			full_proj_issues = open_issues + closed_issues
-		else:
-			full_proj_issues = open_issues
-
-		_print()
-		for issue in full_proj_issues:
-			print(issue)
-		sublime.set_timeout(lambda: self.window.show_quick_panel(full_proj_issues,  self.on_done, sublime.MONOSPACE_FONT), 10)
-
-	def on_done(self, index):
-		#(Eventually) open a view to edit the issue
-		pass
-
 		
 #Changes the project ID via input bar
 class GliPromptInputProjectCommand(sublime_plugin.WindowCommand):
@@ -394,6 +445,28 @@ class GliToggleHideClosedCommand(sublime_plugin.ApplicationCommand):
 		else:
 			return False
 
+class EventListeners(sublime_plugin.EventListener):
+	def on_pre_close(self, view):
+		if view.name() == EDIT_ISSUE_VIEW_NAME:
+			content_region = sublime.Region(0, view.size())
+			content_string = _multi_replace(view.substr(content_region), {"'":"&apos;"})
+			content_dict = ast.literal_eval(content_string)
+
+			arg_dict = {
+			"iid": content_dict["iid"],
+			"title": content_dict["title"],
+			"desc": content_dict["description"],
+			"state": content_dict["state"],
+			"labels": _multi_replace(content_dict["labels"], {"&apos;":"", '[':'', ']':''}), #might need to do a little more work here
+			"milestone": content_dict["milestone"]
+			}
+
+			if content_dict["assignee"] != "":
+				arg_dict["assign_to"] = content_dict["assignee"]
+
+			_print(arg_dict)
+			sublime.run_command("gli_edit_issue", arg_dict)
+
 ######################## Various support functions
 #Get an issue's ID from its IID (ID is an absolute value, IID is relative to a project)
 def _issue_iid_to_id(iid):
@@ -423,7 +496,7 @@ def _username_to_id(username):
 #	should be run after _process_label_arguments if labels are included
 def _process_keyword_arguments(arguments, dict_keys):
 	if not isinstance(arguments, list):
-		arguments = _multi_replace(arguments, ESCAPE_CHARS).split(",").split(",")
+		arguments = _multi_replace(arguments, ESCAPE_CHARS).split(",")
 
 	arg_dict = {}
 	nonkeyword_args = []
@@ -443,8 +516,7 @@ def _process_keyword_arguments(arguments, dict_keys):
 
 	for key in arg_dict.keys():
 		if len(arg_dict[key]) > 1:
-			arg_dict[key] = arg_dict[key].strip()
-
+			arg_dict[key] = _multi_replace(arg_dict[key].strip(), REVERSE_ESCAPE_CHARS)
 	return arg_dict
 
 #Ensures labels are handled as one argument, returns a list of arguments

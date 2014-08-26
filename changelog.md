@@ -1,6 +1,11 @@
 Sublime Gitlab Integration changelog
 ====================================
 
+Version 1.3 - 8/26
+------------------------------------
+- `Edit Issue In Tab` replaced `Get Issues`
+  - Allows you to select an issue and edit it in a new tab. Close to send changes.
+
 Version 1.2.3 - 8/25
 ------------------------------------
 - Fixed issues with output_prefix breaking GLI for Sublime 2

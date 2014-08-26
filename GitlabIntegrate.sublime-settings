@@ -13,6 +13,9 @@
 	//Displays the new installation window
 	"display_intro":true,
 
+	//The name of the tab when using Edit Issue In Tab (note: if you open another tab with this name, weird things might happen)
+	"edit_issue_in_tab_name": "[GLI]: Editing Issue",
+
 	//Suppresses output of closed issues for the Select Issue command
 	"hide_closed_issues":false,
 

@@ -24,8 +24,13 @@
           },
           {
             "command": "gli_toolbar_menu",
-            "caption": "Edit Issue",
+            "caption": "Edit Issue (Input Bar)",
             "args": {"command":"edit_issue"}
+          },
+          {
+            "command": "gli_toolbar_menu", 
+            "caption": "Edit Issue In Tab", 
+            "args": {"command":"edit_issue_in_tab"} 
           },
           {
             "command": "gli_toolbar_menu",
@@ -36,11 +41,6 @@
             "command": "gli_toolbar_menu", 
             "caption": "Add Label(s) To Issue", 
             "args": {"command":"label_issue"} 
-          },
-          {
-            "command": "gli_toolbar_menu", 
-            "caption": "Get Issues", 
-            "args": {"command":"select_issue"} 
           },
           {
             "command": "gli_toolbar_menu", 

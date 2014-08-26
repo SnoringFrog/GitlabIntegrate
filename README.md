@@ -41,6 +41,9 @@ Then, copy and paste the following text into the file (replacing any text alread
 	//Displays the new installation window
 	"display_intro":false,
 
+	//The name of the tab when using Edit Issue In Tab (note: if you open another tab with this name, weird things might happen)
+	"edit_issue_in_tab_name": "[GLI]: Editing Issue",
+
 	//Suppresses output of closed issues for the Select Issue command
 	"hide_closed_issues":false,
 
@@ -60,7 +63,9 @@ Usage
 ------
 GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrate`), with a keyboard shortcut (`Ctrl+Shift+X` on Windows/Linux, `Cmd+Shift+X` on Mac), or via the Command Palette (default: `Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows/Linux). All GLI commands in the command palette begin with "GLI:".
 
-**Command Arguments**: When entering a command, arguments must be comma-separated. All potential arguments are listed to the left of the input box within parentheses. Arguments in square brackets ([]) are optional. 
+**Edit Issue In View**: This mode opens the selected issue for editing in a separate view. To save your changes, simply close the tab.  
+
+**Command Arguments**: When entering a command through the status/input bar, arguments must be comma-separated. All potential arguments are listed to the left of the input box within parentheses. Arguments in square brackets ([]) are optional. 
 
 **Optional and Keyword Arguments**: Optional arguments may be specified as keyword arguments by prepending the argument value with its name and an unescaped equals sign (E.g., to create a new issue called "test_issue" and assign it to the user "robert" without specifying a description, you would type `test_issue, assign_to=username` into the `Create Issue` input box). If no keywords are specified, the arguments are processed left to right. 
 With the exception of labels, every argument is represented by its keyword in the prompt.
@@ -71,12 +76,12 @@ With the exception of labels, every argument is represented by its keyword in th
 
   - The keyword for labels is `labels`
 
-  - If specifying more than one label, you must quote the whole list (e.g., for the `Add Label(s) to Issue` command for the issue with the iid 10, `10, "first_label, second_label"` or `10, labels="first_label, second_label"`)
+  - If specifying more than one label, you must quote the whole list (e.g., for the `Add Label(s) to Issue` command for the issue #10 you would type: `10, "first_label, second_label"` or `10, labels="first_label, second_label"`)
 
-  - If you only specify one label, it does not matter if you quote it or not.
+  - If you only specify one label, it does not matter whether you quote it or not.
 
-  - Specifying labels in the `Edit Issue` command will _replace all current labels_ . Explicitly specifying no labels (e.g. `labels=,`) will remove all labels from the issue.
+  - Specifying labels in the `Edit Issue` command will _replace all current labels_. Explicitly specifying no labels (e.g. `labels=,` or `labels="",`) will remove all labels from the issue.
 
 - *Assign_to*: Users may be idenified by username or user_id (if you happen to know their id). GLI will automatically detect which method you've used.
 
-- *Escaped Characters*: commas (`,`), equals signs (`=`), and double quotes (`"`) in titles/descriptions must be escaped with a forward slash (`/`)
+- *Escaped Characters*: commas (`,`), equals signs (`=`), and double quotes (`"`) in titles/descriptions must be escaped with a backslash (`\`). Only double quotes must be escaped in the `Edit Issue In View` mode.
