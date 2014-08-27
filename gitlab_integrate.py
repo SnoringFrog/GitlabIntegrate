@@ -288,8 +288,9 @@ class GliPromptEditIssueInTab(sublime_plugin.WindowCommand):
 		sublime.set_timeout(lambda: self.window.show_quick_panel(full_proj_issues,  lambda index: self.on_done(index, full_proj_issues), sublime.MONOSPACE_FONT), 10)
 
 	def on_done(self, index, full_proj_issues):
-		issue_iid = full_proj_issues[index].split(":")[0]
-		self.window.active_view().run_command("gli_edit_issue_in_tab", {"issue_iid":issue_iid})
+		if index > -1:	
+			issue_iid = full_proj_issues[index].split(":")[0]
+			self.window.active_view().run_command("gli_edit_issue_in_tab", {"issue_iid":issue_iid})
 
 class GliEditIssueInTabCommand(sublime_plugin.TextCommand):
 	def run(self, edit, issue_iid):
@@ -420,8 +421,9 @@ class GliPromptSelectProjectCommand(sublime_plugin.WindowCommand):
 		#self.window.show_quick_panel(projects_list, lambda index: self.on_done(index, projects_list)) #this works for ST2
 
 	def on_done(self, index, projects_list):
-		proj_id = projects_list[index].split(": ")[1]
-		sublime.run_command("gli_change_project", {"proj_id":proj_id})
+		if index > -1:
+			proj_id = projects_list[index].split(": ")[1]
+			sublime.run_command("gli_change_project", {"proj_id":proj_id})
 
 
 class GliChangeProjectCommand(sublime_plugin.ApplicationCommand):

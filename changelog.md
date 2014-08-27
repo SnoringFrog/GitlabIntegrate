@@ -1,6 +1,10 @@
 Sublime Gitlab Integration changelog
 ====================================
 
+Version 1.3.1 - 8/27
+------------------------------------
+- Canceling the quick panel for `Edit Issue in Tab` and `Select Project ID` now does nothing (as it should) instead of selecting the last item in the list
+
 Version 1.3 - 8/26
 ------------------------------------
 - `Edit Issue In Tab` replaced `Get Issues`
