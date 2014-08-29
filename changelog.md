@@ -2,7 +2,7 @@ Sublime Gitlab Integration changelog
 ====================================
 Version 1.3.2 - 8/29
 ------------------------------------
-- Added threading to the edit issue calls
+- Added threading to Edit Issue calls
 
 Version 1.3.1 - 8/27
 ------------------------------------
