@@ -2,11 +2,27 @@ from __future__ import print_function
 import sublime, sublime_plugin
 import os, sys, inspect
 import ast
+import threading
 
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"dependencies")))
 if cmd_subfolder not in sys.path:
 	sys.path.insert(0, cmd_subfolder)
 import gitlab
+
+# _______________________________________________________________________ 
+#/        _ _   _       _       _       _                       _        \
+#|   __ _(_) |_| | __ _| |__   (_)_ __ | |_ ___  __ _ _ __ __ _| |_ ___  |
+#|  / _` | | __| |/ _` | '_ \  | | '_ \| __/ _ \/ _` | '__/ _` | __/ _ \ |
+#| | (_| | | |_| | (_| | |_) | | | | | | ||  __/ (_| | | | (_| | ||  __/ |
+#|  \__, |_|\__|_|\__,_|_.__/  |_|_| |_|\__\___|\__, |_|  \__,_|\__\___| |
+#|  |___/                                       |___/                    |
+#\                             -created by Ethan @SnoringFrog Piekarski  /
+# ----------------------------------------------------------------------- 
+#        \   ^__^
+#         \  (oo)\_______
+#            (__)\       )\/\
+#                ||----w |
+#                ||     ||
 
 #Functions with "Prompt" in the name generally display either the quick bar or the menu
 #and accept user input (although in some cases they don't do anything with that input)
@@ -67,6 +83,7 @@ class Settings:
 		_print("reloading settings")
 
 		global OUTPUT_PREFIX 
+		global EDIT_ISSUE_VIEW_NAME
 
 		constants = self.constants
 		old_host = self.project_host
@@ -113,9 +130,6 @@ class Settings:
 	def _load_setting(self, setting_key, default):
 		return self.current_file_settings.get(self.constants[setting_key], 
 			self.settings.get(self.constants[setting_key], default))
-
-if sublime.version()[0] == '2':
-	settings = Settings() #for Sublime 2 since it won't run plugin_loaded()
 
 #Runs when any command is selected from the toolbar
 class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
@@ -218,6 +232,38 @@ class GliPromptEditIssueCommand(sublime_plugin.WindowCommand):
 #Edit an issue
 class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 	def run(self, iid, title="", desc="", assign_to="unused", state="", labels="", milestone=""):
+		thread = GliEditThreadCall(iid, title, desc, assign_to, state, labels, milestone)
+		thread.start()
+		self.handle_thread(thread)
+
+	def handle_thread(self, thread):
+		if thread.is_alive():
+			sublime.set_timeout(lambda: self.handle_thread(thread), 100)
+		elif thread.result == False:
+			_status_print(ERR_NOT_EDITED)
+		else:
+			_status_print("issue edited")
+
+class GliEditThreadCall(threading.Thread):
+	def __init__(self, iid=0, title="", desc="", assign_to="unused", state="", labels="", milestone=""):
+		self.iid=iid
+		self.title=title
+		self.desc=desc
+		self.assign_to=assign_to
+		self.state=state
+		self.labels=labels
+		self.milestone=milestone
+		threading.Thread.__init__(self)
+
+	def run(self):
+		iid=self.iid
+		title=self.title
+		desc=self.desc
+		assign_to=self.assign_to
+		state=self.state
+		labels=self.labels
+		milestone=self.milestone
+
 		issue_id = _issue_iid_to_id(iid)
 		if "open" in state: state="reopen"
 		elif state == "closed": state="close"
@@ -237,20 +283,18 @@ class GliEditIssueCommand(sublime_plugin.ApplicationCommand):
 		elif not str(assign_to).isdigit():
 			assign_to = _username_to_id(assign_to)
 			if assign_to == False:
-				_status_print(ERR_NOT_EDITED)
+				self.result = False
 				return False
 		
 		if not git.editissue(settings.project_id, issue_id, title=title, description=desc,
 			assignee_id=assign_to, milestone_id=milestone, labels=labels, state_event=state):
-			_status_print(ERR_NOT_EDITED)
-			return False
+			self.result = False
 		else:
-			_status_print("issue edited")
-			return True
+			self.result = True
 
 #Opens the selected issue in a new tab for editing. 
 #EventListeners.on_pre_close() handles saving the information afterwards.
-class GliPromptEditIssueInTab(sublime_plugin.WindowCommand):
+class GliPromptEditIssueInTabCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		full_proj_issues = _get_all_issues()
 
@@ -448,7 +492,7 @@ class GliToggleHideClosedCommand(sublime_plugin.ApplicationCommand):
 			return False
 
 class EventListeners(sublime_plugin.EventListener):
-	def on_pre_close(self, view):
+	def on_close(self, view):
 		if view.name() == EDIT_ISSUE_VIEW_NAME:
 			content_region = sublime.Region(0, view.size())
 			content_string = _multi_replace(view.substr(content_region), {"'":"&apos;"})
@@ -468,6 +512,7 @@ class EventListeners(sublime_plugin.EventListener):
 
 			_print(arg_dict)
 			sublime.run_command("gli_edit_issue", arg_dict)
+
 
 ######################## Various support functions
 #Get an issue's ID from its IID (ID is an absolute value, IID is relative to a project)
@@ -585,3 +630,6 @@ def _print(*args, **kwargs):
 		print(OUTPUT_PREFIX, *args)
 	else: 
 		print(*args, **kwargs)
+
+if sublime.version()[0] == '2':
+	settings = Settings() #for Sublime 2 since it won't run plugin_loaded()

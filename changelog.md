@@ -1,5 +1,8 @@
 Sublime Gitlab Integration changelog
 ====================================
+Version 1.3.2 - 8/29
+------------------------------------
+- Added threading to the edit issue calls
 
 Version 1.3.1 - 8/27
 ------------------------------------
@@ -32,7 +35,7 @@ Version 1.2.2 - 8/22
 
 Version 1.2.1 - 8/22
 ------------------------------------
-- Overhaul of the settings system; renamed all settings _This means if you're upgrading from a pre-1.2.1 version your user settings file will no longer work_
+- Overhaul of the settings system; renamed all settings. _This means if you're upgrading from a pre-1.2.1 version your user settings file will no longer work_
 
 - Introduced ability to hide closed issues from `get_issues`
 
@@ -52,7 +55,7 @@ Version 1.2 - 8/20
 
 - `Get Issues` added
 
-  - Displays a list of all issues (open and closed) in the current project, sorted by state and then by giiid
+  - Displays a list of all issues (open and closed) in the current project, sorted by state and then by iid
 
 Version 1.1 - 8/19
 ------------------------------------

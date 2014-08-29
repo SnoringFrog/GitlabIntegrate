@@ -1,6 +1,6 @@
 Sublime Gitlab Integrate
 ========================
-This is a Sublime Text 2/3 Plugin that integrates various Gitlab features into the editor. 
+This is a Sublime Text 2/3 Plugin that integrates various Gitlab features (primarily dealing with issue management, currently) into the editor. 
 
 Installation
 ----------
