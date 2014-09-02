@@ -85,3 +85,7 @@ With the exception of labels, every argument is represented by its keyword in th
 - *Assign_to*: Users may be idenified by username or user_id (if you happen to know their id). GLI will automatically detect which method you've used.
 
 - *Escaped Characters*: commas (`,`), equals signs (`=`), and double quotes (`"`) in titles/descriptions must be escaped with a backslash (`\`). Only double quotes must be escaped in the `Edit Issue In View` mode.
+
+Modifying
+---------
+Before modifying GitlabIntegrate, users are encouraged to read [notes_for_modifying.md](./notes_for_modifying.md).

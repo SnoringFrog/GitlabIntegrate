@@ -1,0 +1,52 @@
+[
+	{
+		"caption": "GLI: Create Issue", 
+		"command": "gli_toolbar_menu",
+		"args": {"command":"create_issue"} 
+	},
+	{
+		"caption": "GLI: Edit Issue (Input Bar)",
+		"command": "gli_toolbar_menu",
+		"args": {"command":"edit_issue"} 
+	},
+	{
+		"caption": "GLI: Edit Issue In Tab", 
+		"command": "gli_toolbar_menu",
+		"args": {"command":"edit_issue_in_tab"} 
+	},
+	{
+		"caption": "GLI: Assign Issue", 
+		"command": "gli_toolbar_menu",
+		"args": {"command":"assign_issue"} 
+	},
+	{
+		"caption": "GLI: Toggle Issue State", 
+		"command": "gli_toolbar_menu",
+		"args": {"command":"toggle_issue"} 
+	},
+	{
+		"caption": "GLI: Add Labels To Issue", 
+		"command": "gli_toolbar_menu",
+		"args": {"command":"label_issue"} 
+	},
+	{
+		"caption": "GLI: Input Project ID", 
+		"command": "gli_toolbar_menu",
+		"args": {"command":"input_project"} 
+	},
+	{
+		"caption": "GLI: Select Project", 
+		"command": "gli_toolbar_menu",
+		"args": {"command":"select_project"} 
+	},
+	{
+		"caption": "GLI: Toggle Hide Closed Issues from Get Issues",
+		"command": "gli_toggle_hide_closed",
+        "args": {"setting":"hide_closed_issues"}
+	},
+	{
+		"caption": "GLI: User Settings", 
+		"command": "open_file",
+		"args": {"file": "${packages}/User/GitlabIntegrate.sublime-settings"} 
+	}
+]

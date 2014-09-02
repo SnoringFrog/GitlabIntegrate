@@ -1,5 +1,13 @@
 Sublime Gitlab Integration changelog
 ====================================
+Version 1.4.0 - 9/2
+------------------------------------
+- Added `Toggle Issue State` command
+
+- Shortened `Hide Closed Issues in Get Issues` to `Hide Closed Issues` 
+
+- Added [notes_for_modifying.md](./notes_for_modifying.md).
+
 Version 1.3.2 - 8/29
 ------------------------------------
 - Added threading to Edit Issue calls
@@ -19,7 +27,7 @@ Version 1.2.3 - 8/25
 ------------------------------------
 - Fixed issues with output_prefix breaking GLI for Sublime 2
 
-- Added documentation about commands and arguments to README.md
+- Added documentation about commands and arguments to [the README](./README.md)
 
 - Added a toolbar item for the main GLI prompt so that the keyboard shortcut would be displayed in the menu
 
@@ -61,7 +69,7 @@ Version 1.1 - 8/19
 ------------------------------------
 - GLI now runs on Sublime 3.
 
-- intro_text.txt added
+- [intro_text.txt](./intro_text.txt) added
 
 - error/success messages all appear in status bar (error are also in the console)
 

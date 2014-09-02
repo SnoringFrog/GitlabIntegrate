@@ -16,7 +16,7 @@ import gitlab
 #| | (_| | | |_| | (_| | |_) | | | | | | ||  __/ (_| | | | (_| | ||  __/ |
 #|  \__, |_|\__|_|\__,_|_.__/  |_|_| |_|\__\___|\__, |_|  \__,_|\__\___| |
 #|  |___/                                       |___/                    |
-#\                            -created by Ethan @SnoringFrog Piekarski   /
+#\                            -Ethan @SnoringFrog Piekarski              /
 # ----------------------------------------------------------------------- 
 #        \   ^__^
 #         \  (oo)\_______
@@ -48,7 +48,7 @@ ERR_NOT_CREATED = ERR_PREFIX + "issue not created"
 ERR_NOT_EDITED = ERR_PREFIX + "issue not edited"
 ERR_NOT_ASSIGNED = ERR_PREFIX + "issue not assigned"
 ERR_NOT_LABELED = ERR_PREFIX + "label(s) not added"
-def ERR_NOT_FOUND(item): return ERR_PREFIX + 'issue/user "{0}"" not found'.format(item)
+def ERR_NOT_FOUND(item): return ERR_PREFIX + 'issue/user "{0}" not found'.format(item)
 
 def  plugin_loaded():
 	global settings
@@ -146,6 +146,8 @@ class GliToolbarMenuCommand(sublime_plugin.WindowCommand):
 				self.window.run_command("gli_prompt_edit_issue_in_tab")
 			elif command == "assign_issue":
 				self.window.run_command("gli_prompt_assign_issue")
+			elif command == "toggle_issue":
+				self.window.run_command("gli_toggle_issue")
 			elif command == "label_issue":
 				self.window.run_command("gli_prompt_label_issue")
 			elif command == "input_project":
@@ -161,8 +163,8 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 		_status_print("project_id:" + str(settings.project_id))
 
 		if not settings.display_intro:
-			ACTIONS = ["Create Issue", "Edit Issue (Input Bar)", "Edit Issue In Tab", "Assign Issue", "Add Label(s) To Issue", 
-			"Input Project ID", "Select Project ID"]
+			ACTIONS = ["Create Issue", "Edit Issue (Input Bar)", "Edit Issue In Tab", "Assign Issue", 
+			"Toggle Issue State", "Add Label(s) To Issue", "Input Project ID", "Select Project ID"]
 			self.window.show_quick_panel(ACTIONS, self.on_done)
 		else:
 			self.show_intro()
@@ -185,10 +187,12 @@ class GliPromptGitlabCommand(sublime_plugin.WindowCommand):
 		elif index == 3:
 			self.window.run_command("gli_prompt_assign_issue")
 		elif index == 4:
-			self.window.run_command("gli_prompt_label_issue")
+			self.window.run_command("gli_prompt_toggle_issue")
 		elif index == 5:
-			self.window.run_command("gli_prompt_input_project")
+			self.window.run_command("gli_prompt_label_issue")
 		elif index == 6:
+			self.window.run_command("gli_prompt_input_project")
+		elif index == 7:
 			self.window.run_command("gli_prompt_select_project")
 
 
@@ -296,39 +300,7 @@ class GliEditThreadCall(threading.Thread):
 #EventListeners.on_pre_close() handles saving the information afterwards.
 class GliPromptEditIssueInTabCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		full_proj_issues = _get_all_issues()
-
-		open_issues = []
-		closed_issues = []
-
-		for issue in full_proj_issues:
-			state = "-" + issue["state"][0].upper() #State flag: -O = open, -R = reopened, -C = closed
-			title = issue["title"]
-
-			#Truncate long titles
-			max_title_width = 39 #46 minus space for stateflag and iid
-			if len(title) > max_title_width:
-				title = title[:max_title_width]
-
-			issue_string = "{iid:3}:{title:{title_width}} {state}".format(
-				iid=issue["iid"], title=title, title_width=max_title_width, state=state)
-
-			if state == "-O" or state == "-R":
-				open_issues.append(issue_string)
-			elif state == "-C":
-				closed_issues.append(issue_string)
-
-		open_issues.sort(key=lambda issue: issue.split(":")[0])
-		closed_issues.sort(key=lambda issue: issue.split(":")[0])
-
-		if not settings.hide_closed_issues:
-			full_proj_issues = open_issues + closed_issues
-		else:
-			full_proj_issues = open_issues
-
-		_print()
-		for issue in full_proj_issues:
-			print(issue)
+		full_proj_issues = _quick_select_issues()
 		sublime.set_timeout(lambda: self.window.show_quick_panel(full_proj_issues,  lambda index: self.on_done(index, full_proj_issues), sublime.MONOSPACE_FONT), 10)
 
 	def on_done(self, index, full_proj_issues):
@@ -406,6 +378,35 @@ class GliAssignIssueCommand(sublime_plugin.ApplicationCommand):
 			return False
 		else:
 			_status_print("issue assigned")
+			return True
+
+
+#Toggles selected issue's state between open/closed
+class GliPromptToggleIssueCommand(sublime_plugin.WindowCommand):
+	def run(self):
+		full_proj_issues = _quick_select_issues()
+		sublime.set_timeout(lambda: self.window.show_quick_panel(full_proj_issues,  lambda index: self.on_done(index, full_proj_issues), sublime.MONOSPACE_FONT), 10)
+
+	def on_done(self, index, full_proj_issues):
+		if index > -1:	
+			issue_iid = full_proj_issues[index].split(":")[0]
+			sublime.run_command("gli_toggle_issue", {"issue_iid":issue_iid})
+
+class GliToggleIssueCommand(sublime_plugin.ApplicationCommand):
+	def run(self, issue_iid):
+		issue_id = _issue_iid_to_id(issue_iid)
+		current_state = git.getprojectissue(settings.project_id, issue_id)["state"]
+
+		if "open" in current_state:
+			new_state = "close"
+		else:
+			new_state = "reopen"
+
+		if not git.editissue(settings.project_id, issue_id, state_event=new_state):
+				_status_print(ERR_NOT_EDITED)		
+				return False
+		else:
+			_status_print("issue state toggled")
 			return True
 
 
@@ -510,7 +511,6 @@ class EventListeners(sublime_plugin.EventListener):
 			if content_dict["assignee"] != "":
 				arg_dict["assign_to"] = content_dict["assignee"]
 
-			_print(arg_dict)
 			sublime.run_command("gli_edit_issue", arg_dict)
 
 
@@ -596,6 +596,45 @@ def _get_all_issues():
 		issues_page = git.getprojectissues(settings.project_id, page=current_page, per_page=100)
 	
 	return issues	
+
+#Display all issues in a quick select box.
+#Returns formatted list of issues sorted by state and then by iid
+def _quick_select_issues():
+	full_proj_issues = _get_all_issues()
+
+	open_issues = []
+	closed_issues = []
+
+	for issue in full_proj_issues:
+		state = "-" + issue["state"][0].upper() #State flag: -O = open, -R = reopened, -C = closed
+		title = issue["title"]
+
+		#Truncate long titles
+		max_title_width = 39 #46 minus space for stateflag and iid
+		if len(title) > max_title_width:
+			title = title[:max_title_width]
+
+		issue_string = "{iid:3}:{title:{title_width}} {state}".format(
+			iid=issue["iid"], title=title, title_width=max_title_width, state=state)
+
+		if state == "-O" or state == "-R":
+			open_issues.append(issue_string)
+		elif state == "-C":
+			closed_issues.append(issue_string)
+
+	open_issues.sort(key=lambda issue: issue.split(":")[0])
+	closed_issues.sort(key=lambda issue: issue.split(":")[0])
+
+	if not settings.hide_closed_issues:
+		full_proj_issues = open_issues + closed_issues
+	else:
+		full_proj_issues = open_issues
+
+	_print()
+	for issue in full_proj_issues:
+		print(issue)
+
+	return full_proj_issues
 
 #Returns a list of all projects
 def _get_all_projects():
