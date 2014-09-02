@@ -1,5 +1,18 @@
 Sublime Gitlab Integration changelog
 ====================================
+
+Version 1.4.3 - 9/2
+------------------------------------
+- Added messages.json
+
+Version 1.4.2 - 9/2
+------------------------------------
+- Attempted Package Control installation fix
+
+Version 1.4.1 - 9/2
+------------------------------------
+- Updated installation instructions
+
 Version 1.4.0 - 9/2
 ------------------------------------
 - Added `Toggle Issue State` command

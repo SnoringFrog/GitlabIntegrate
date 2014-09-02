@@ -26,7 +26,7 @@ import gitlab
 
 #Before editing, please see notes_for_modifying.md
 
-INTRO_TEXT_FILE = "intro_text.txt"
+INTRO_TEXT_FILE = "./messages/intro_text.txt"
 ESCAPE_CHARS = {"\,":"&comma;", "\=":"&equals;", '\\"':"&quot;"}
 REVERSE_ESCAPE_CHARS = {"&comma;":",", "&equals;":'=', "&quot;":'"'} 
 OUTPUT_PREFIX = "[GLI]:" #May be overridden by user settings

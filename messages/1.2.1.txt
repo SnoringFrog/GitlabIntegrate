@@ -1,0 +1,1 @@
+Settings from pre-1.2.1 installations of GLI will not work with GLI 1.2.1 and later. Make sure to update your user settings file!
