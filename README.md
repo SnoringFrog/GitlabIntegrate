@@ -6,11 +6,15 @@ Installation
 ----------
 There are three ways to install:
 
-1. Clone this repository into `[your Sumblime installation directory]/Packages/`
+- With Package Control installed:
+  1. (*Recommended*) Simply search for "Gitlab Integrate" in the "Install Package" menu and select it
 
-2. Clone/download this repo wherever you'd like, then copy the files in it to `[your Sublime installation directory]/Packages/GitlabIntegrate`
+  2. If that doesn't work (due to network issues with Sublime, perhaps), you can download a `.zip` of the GLI repository, change the file extension to `.sublime-project`, and place that file in `[your Sublime installation directory]/Installed Packages/` and restart Sublime. Package Control should unpack it automatically for you this way.
 
-3. If you have Package Control installed, create a `.zip` of the files in the repository (ignore any dotfiles) and change the `.zip` extension to `.sublime-package`. Place the `.sublime-package` in `[your Sublime installation directory]/Installed Packages/` and restart Sublime, Package Control should unpack it automatically.
+- Without Package Control:
+  1. Clone this repository into `[your Sumblime installation directory]/Packages/`
+
+  2. Clone/download this repo wherever you'd like, then copy the files in it to `[your Sublime installation directory]/Packages/GitlabIntegrate`
 
 Once installed, the plugin can be activated with `cmd+shift+x` (Mac) or `ctrl+shift+x` (Win/Linux).
 

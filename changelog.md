@@ -11,6 +11,8 @@ Version 1.4.0 - 9/2
 
 - Actually uploaded the `.sublime-commands` file (should have been uploaded with v1.2.2). Command palette commands should work now
 
+- GLI now available in Sublime Package Control
+
 Version 1.3.2 - 8/29
 ------------------------------------
 - Added threading to Edit Issue calls

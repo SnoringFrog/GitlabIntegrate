@@ -24,16 +24,7 @@ import gitlab
 #                ||----w |
 #                ||     ||
 
-#Functions with "Prompt" in the name generally display either the quick bar or the menu
-#and accept user input (although in some cases they don't do anything with that input)
-
-#_print() is used for messages that go only to the console; _status_print() also goes
-#to the status bar. Both are prefixed by OUTPUT_PREFIX
-
-#settings.reload_settings() should be called at any plugin entry point
-
-#GliSelectIssueCommand() and EventDump() are a nightmare of replacements. 
-#Changes to escape characters will likely break them.
+#Before editing, please see notes_for_modifying.md
 
 INTRO_TEXT_FILE = "intro_text.txt"
 ESCAPE_CHARS = {"\,":"&comma;", "\=":"&equals;", '\\"':"&quot;"}
