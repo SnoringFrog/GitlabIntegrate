@@ -3,10 +3,13 @@ Sublime Gitlab Integration changelog
 Version 1.4.0 - 9/2
 ------------------------------------
 - Added `Toggle Issue State` command
+  - Toggles an issue between open and closed
 
 - Shortened `Hide Closed Issues in Get Issues` to `Hide Closed Issues` 
 
-- Added [notes_for_modifying.md](./notes_for_modifying.md).
+- Added [notes_for_modifying.md](./notes_for_modifying.md)
+
+- Actually uploaded the `.sublime-commands` file (should have been uploaded with v1.2.2). Command palette commands should work now
 
 Version 1.3.2 - 8/29
 ------------------------------------
@@ -19,7 +22,7 @@ Version 1.3.1 - 8/27
 Version 1.3 - 8/26
 ------------------------------------
 - `Edit Issue In Tab` replaced `Get Issues`
-  - Allows you to select an issue and edit it in a new tab. Close to send changes.
+  - Allows you to select an issue and edit it in a new tab. Close to send changes
 
 - Characters are now escaped with a backslash (`\`) instead of a forward slash (`/`)
 
