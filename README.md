@@ -4,7 +4,7 @@ This is a Sublime Text 2/3 Plugin that integrates various Gitlab features (prima
 
 Installation
 ----------
-There are three ways to install:
+There are four ways to install:
 
 - With Package Control installed:
   1. (*Recommended*) Simply search for "Gitlab Integrate" in the "Install Package" menu and select it
