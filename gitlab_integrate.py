@@ -26,7 +26,8 @@ import gitlab
 
 #Before editing, please see notes_for_modifying.md
 
-INTRO_TEXT_FILE = "./messages/intro_text.txt"
+SUBLIME_MAJOR_VERSION = sublime.version()[0]
+INTRO_TEXT_FILE = sublime.packages_path() + "/GitlabIntegrate/messages/intro.txt"
 ESCAPE_CHARS = {"\,":"&comma;", "\=":"&equals;", '\\"':"&quot;"}
 REVERSE_ESCAPE_CHARS = {"&comma;":",", "&equals;":'=', "&quot;":'"'} 
 OUTPUT_PREFIX = "[GLI]:" #May be overridden by user settings
@@ -41,7 +42,7 @@ ERR_NOT_ASSIGNED = ERR_PREFIX + "issue not assigned"
 ERR_NOT_LABELED = ERR_PREFIX + "label(s) not added"
 def ERR_NOT_FOUND(item): return ERR_PREFIX + 'issue/user "{0}" not found'.format(item)
 
-def  plugin_loaded():
+def plugin_loaded():
 	global settings
 	settings = Settings()
 
@@ -84,7 +85,11 @@ class Settings:
 		self.settings = sublime.load_settings(self.constants["FILE"])
 
 		#.sublime-project specific settings
-		self.current_file_settings = sublime.active_window().active_view().settings()
+		print("#########")
+		current_window = sublime.active_window()
+		if (current_window):
+			self.current_file_settings = current_window.active_view().settings()
+		else: self.current_file_settings = self.settings
 
 		self.hide_closed_issues = self._load_setting("HIDE_CLOSED", False)
 		self.project_host = self._load_setting("HOST", self.NO_HOST)
@@ -102,7 +107,9 @@ class Settings:
 	def check_connection(self, host, token):
 		if self.project_host == self.NO_HOST or self.user_token == self.NO_TOKEN:
 			_status_print(ERR_COULD_NOT_CONNECT)
-			self.change_setting(self.constants["DISPLAY_INTRO"], True)
+
+			if not self.settings.get(self.constants["DISPLAY_INTRO"]):
+				self.change_setting(self.constants["DISPLAY_INTRO"], True)
 			return
 		elif host != self.project_host or token != self.user_token:
 			global git
@@ -661,5 +668,6 @@ def _print(*args, **kwargs):
 	else: 
 		print(*args, **kwargs)
 
-if sublime.version()[0] == '2':
-	settings = Settings() #for Sublime 2 since it won't run plugin_loaded()
+if SUBLIME_MAJOR_VERSION == '2':
+	plugin_loaded()
+#	settings = Settings() #for Sublime 2 since it won't run plugin_loaded()

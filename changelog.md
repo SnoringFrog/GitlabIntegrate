@@ -1,13 +1,17 @@
 Sublime Gitlab Integration changelog
 ====================================
+Version 1.4.4 - 9/3
+------------------------------------
+- Bugfixes for GLI in ST2, should work there now
+- Changed `intro_text.txt` to `intro.txt`
 
 Version 1.4.3 - 9/2
 ------------------------------------
-- Added messages.json
+- Added messages.json and set up messages directory
 
 Version 1.4.2 - 9/2
 ------------------------------------
-- Attempted Package Control installation fix
+- Attempted Package Control installation fix (uneeded - issue turned out to be my impatience)
 
 Version 1.4.1 - 9/2
 ------------------------------------

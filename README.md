@@ -67,7 +67,7 @@ Usage
 ------
 GitlabIntegrate functions can be accessed via the menu (`Tools -> GitlabIntegrate`), with a keyboard shortcut (`Ctrl+Shift+X` on Windows/Linux, `Cmd+Shift+X` on Mac), or via the Command Palette (default: `Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows/Linux). All GLI commands in the command palette begin with "GLI:".
 
-**Edit Issue In View**: This mode opens the selected issue for editing in a separate view. To save your changes, simply close the tab.  
+**Edit Issue In Tab**: This mode opens the selected issue for editing in a separate view. To save your changes, simply close the tab.  
 
 **Command Arguments**: When entering a command through the status/input bar, arguments must be comma-separated. All potential arguments are listed to the left of the input box within parentheses. Arguments in square brackets ([]) are optional. 
 
