@@ -1,5 +1,9 @@
 Sublime Gitlab Integration changelog
 ====================================
+Version 1.4.5 - 9/3
+------------------------------------
+- Added keymap files to preferences menu
+
 Version 1.4.4 - 9/3
 ------------------------------------
 - Bugfixes for GLI in ST2, should work there now
