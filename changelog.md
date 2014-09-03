@@ -8,7 +8,7 @@ Version 1.4.4 - 9/3
 
 - [intro.txt](./messages/intro.txt) is now loaded with a more reliable path
 
-- Added `.sublime-workspace` to [.gitignore](./gitignore)
+- Added `.sublime-workspace` to [.gitignore](./.gitignore)
 
 Version 1.4.3 - 9/2
 ------------------------------------
