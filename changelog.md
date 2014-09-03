@@ -4,15 +4,15 @@ Version 1.4.4 - 9/3
 ------------------------------------
 - Bugfixes for GLI in ST2, should work there now
 
-- Changed `intro_text.txt` to [ignore.txt](./messages/intro.txt)
+- Changed `intro_text.txt` to [intro.txt](./messages/intro.txt)
 
-- `intro.txt` is now loaded with a more reliable path
+- [intro.txt](./messages/intro.txt) is now loaded with a more reliable path
 
 - Added `.sublime-workspace` to [.gitignore](./gitignore)
 
 Version 1.4.3 - 9/2
 ------------------------------------
-- Added messages.json and set up messages directory
+- Added [messages.json](./messages.json) and set up messages directory
 
 Version 1.4.2 - 9/2
 ------------------------------------
@@ -31,7 +31,7 @@ Version 1.4.0 - 9/2
 
 - Added [notes_for_modifying.md](./notes_for_modifying.md)
 
-- Actually uploaded the `.sublime-commands` file (should have been uploaded with v1.2.2). Command palette commands should work now
+- Actually uploaded the [.sublime-commands](./Default.sublime-commands) file (should have been uploaded with v1.2.2). Command palette commands should work now
 
 - GLI now available in Sublime Package Control
 
@@ -60,7 +60,7 @@ Version 1.2.3 - 8/25
 
 Version 1.2.2 - 8/22
 ------------------------------------
-- All settings except `display_intro` now check for values in .sublime-project files first
+- All settings except `display_intro` now check for values in `.sublime-project` files first
 
 - `output_prefix` setting added (default value="[GLI]:"), all outputs now prefixed
 
