@@ -3,7 +3,12 @@ Sublime Gitlab Integration changelog
 Version 1.4.4 - 9/3
 ------------------------------------
 - Bugfixes for GLI in ST2, should work there now
-- Changed `intro_text.txt` to `intro.txt`
+
+- Changed `intro_text.txt` to [ignore.txt](./messages/intro.txt)
+
+- `intro.txt` is now loaded with a more reliable path
+
+- Added `.sublime-workspace` to [.gitignore](./gitignore)
 
 Version 1.4.3 - 9/2
 ------------------------------------
