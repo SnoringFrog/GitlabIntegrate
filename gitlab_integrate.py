@@ -85,7 +85,6 @@ class Settings:
 		self.settings = sublime.load_settings(self.constants["FILE"])
 
 		#.sublime-project specific settings
-		print("#########")
 		current_window = sublime.active_window()
 		if (current_window):
 			self.current_file_settings = current_window.active_view().settings()
