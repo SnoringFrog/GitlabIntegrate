@@ -52,3 +52,7 @@ Then, copy and paste the following text into the file (replacing any text alread
 	*/
 	"project_id": 0	
 }
+
+Update Notes
+------------
+Update notes can always be found in changelog.md.

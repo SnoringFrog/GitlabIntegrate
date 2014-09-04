@@ -4,12 +4,10 @@ This is a Sublime Text 2/3 Plugin that integrates various Gitlab features (prima
 
 Installation
 ----------
-There are four ways to install:
+There are 3 ways to install:
 
 - With Package Control installed:
   1. (*Recommended*) Simply search for "Gitlab Integrate" in the "Install Package" menu and select it
-
-  2. If that doesn't work (due to network issues with Sublime, perhaps), you can download a `.zip` of the GLI repository, change the file extension to `.sublime-project`, and place that file in `[your Sublime installation directory]/Installed Packages/` and restart Sublime.
 
 - Without Package Control:
   1. Clone this repository into `[your Sumblime installation directory]/Packages/`
