@@ -1,5 +1,9 @@
 Sublime Gitlab Integration changelog
 ====================================
+Version 1.4.9 - 9/4
+------------------------------------
+- Typo fix for [messages.json](./messages.json)
+
 Vertion 1.4.8 - 9/4
 ------------------------------------
 - Added `.no-sublime-package`, should fix the current ST3 issues.
