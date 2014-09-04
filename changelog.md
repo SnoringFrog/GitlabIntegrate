@@ -1,5 +1,13 @@
 Sublime Gitlab Integration changelog
 ====================================
+Vertion 1.4.8 - 9/4
+------------------------------------
+- Added `.no-sublime-package`, should fix the current ST3 issues.
+
+Version 1.4.7 - 9/4
+------------------------------------
+- Fixes ST3 "module not found"
+
 Version 1.4.6b - 9/4
 ------------------------------------
 - Beta of "module not found" fix for ST3
