@@ -4,10 +4,14 @@ import os, sys, inspect
 import ast
 import threading
 
-cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"dependencies")))
-if cmd_subfolder not in sys.path:
-	sys.path.insert(0, cmd_subfolder)
-import gitlab
+SUBLIME_MAJOR_VERSION = sublime.version()[0]
+if SUBLIME_MAJOR_VERSION == "3":
+	from . import gitlab
+else:
+	import gitlab
+#cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"dependencies")))
+#if cmd_subfolder not in sys.path:
+#	sys.path.insert(0, cmd_subfolder)
 
 # _______________________________________________________________________ 
 #/        _ _   _       _       _       _                       _        \
@@ -26,8 +30,6 @@ import gitlab
 
 #Before editing, please see notes_for_modifying.md
 
-SUBLIME_MAJOR_VERSION = sublime.version()[0]
-INTRO_TEXT_FILE = sublime.packages_path() + "/GitlabIntegrate/messages/intro.txt"
 ESCAPE_CHARS = {"\,":"&comma;", "\=":"&equals;", '\\"':"&quot;"}
 REVERSE_ESCAPE_CHARS = {"&comma;":",", "&equals;":'=', "&quot;":'"'} 
 OUTPUT_PREFIX = "[GLI]:" #May be overridden by user settings
@@ -45,6 +47,9 @@ def ERR_NOT_FOUND(item): return ERR_PREFIX + 'issue/user "{0}" not found'.format
 def plugin_loaded():
 	global settings
 	settings = Settings()
+
+	global INTRO_TEXT_FILE
+	INTRO_TEXT_FILE = sublime.packages_path() + "/GitlabIntegrate/messages/intro.txt"
 
 class Settings:
 	constants = {

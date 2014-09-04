@@ -1,5 +1,9 @@
 Sublime Gitlab Integration changelog
 ====================================
+Version 1.4.6b - 9/4
+------------------------------------
+- Beta of "module not found" fix for ST3
+
 Version 1.4.5 - 9/3
 ------------------------------------
 - Added keymap files to preferences menu
