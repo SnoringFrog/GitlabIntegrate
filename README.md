@@ -10,8 +10,7 @@ There are 3 ways to install:
   1. (*Recommended*) Simply search for "Gitlab Integrate" in the "Install Package" menu and select it
 
 - Without Package Control:
-  1. Clone this repository into `[your Sumblime installation directory]/Packages/`
-
+  1. Clone this repository into `[your Sumblime installation directory]/Packages/` 
   2. Clone/download this repo wherever you'd like, then copy the files in it to `[your Sublime installation directory]/Packages/GitlabIntegrate`
 
 Once installed, the plugin can be activated with `cmd+shift+x` (Mac) or `ctrl+shift+x` (Win/Linux).

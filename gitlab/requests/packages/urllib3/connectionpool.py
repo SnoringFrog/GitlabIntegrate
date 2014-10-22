@@ -24,18 +24,18 @@ except ImportError:
     from Queue import LifoQueue, Empty, Full
 
 
-try: # Compiled with SSL?
-    HTTPSConnection = object
-    BaseSSLError = None
-    ssl = None
+#try: # Compiled with SSL?
+HTTPSConnection = object
+BaseSSLError = None
+ssl = None
 
-    try: # Python 3
-        from http.client import HTTPSConnection
-    except ImportError:
-        from httplib import HTTPSConnection
+try: # Python 3
+    from http.client import HTTPSConnection
+except ImportError:
+    from httplib import HTTPSConnection
 
-    import ssl
-    BaseSSLError = ssl.SSLError
+import ssl
+BaseSSLError = ssl.SSLError
 
 except (ImportError, AttributeError): # Platform-specific: No SSL.
     pass

@@ -9,10 +9,6 @@ if SUBLIME_MAJOR_VERSION == "3":
 	from . import gitlab
 else:
 	import gitlab
-#cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"dependencies")))
-#if cmd_subfolder not in sys.path:
-#	sys.path.insert(0, cmd_subfolder)
-
 # _______________________________________________________________________ 
 #/        _ _   _       _       _       _                       _        \
 #|   __ _(_) |_| | __ _| |__   (_)_ __ | |_ ___  __ _ _ __ __ _| |_ ___  |
