@@ -47,7 +47,7 @@ Then, copy and paste the following text into the file (replacing any text alread
 
 	/*
 	The default project ID.
-	This can be found by running GitlabIntegrate's `Select Project ID` command after configuring 
+	This can be found by running GitlabIntegrate's "Get Project IDs" command after configuring 
 	your host and user_token. All the projects you have access to should be listed with their IDs.
 	*/
 	"project_id": 0	

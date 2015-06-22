@@ -1,0 +1,1 @@
+{"dependencies": [], "description": "Integrates various Gitlab features (mostly issue management) into Sublime 2/3.", "url": "https://github.com/SnoringFrog/GitlabIntegrate", "platforms": ["*"], "version": "1.4.11", "sublime_text": "*"}

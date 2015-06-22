@@ -640,7 +640,7 @@ def _get_all_projects():
 	projects_page = git.getprojects(per_page=100)
 
 	current_page = 1
-
+	_print(projects_page)
 	while  projects_page:
 		projects += projects_page
 		current_page += 1
