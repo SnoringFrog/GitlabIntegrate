@@ -1,0 +1,1 @@
+GLI still does not seem to work with projects hosted on gitlab.com. Otherwise, a plugin-breaking bug has been removed with the update of various included packages.
