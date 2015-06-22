@@ -37,9 +37,6 @@ except ImportError:
 import ssl
 BaseSSLError = ssl.SSLError
 
-except (ImportError, AttributeError): # Platform-specific: No SSL.
-    pass
-
 
 from .request import RequestMethods
 from .response import HTTPResponse
