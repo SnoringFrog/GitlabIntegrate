@@ -1,8 +1,12 @@
 Sublime Gitlab Integration changelog
 ====================================
+Version 1.5.1 - 6/22/15
+------------------------------------
+- Updated version number in metadata
+
 Version 1.5.0 - 6/22/15
 ------------------------------------
-Updated included libraries, fixed plugin-breaking bug
+- Updated included libraries, fixed plugin-breaking bug
 
 Version 1.4.11 - 5/4/15 
 ------------------------------------
