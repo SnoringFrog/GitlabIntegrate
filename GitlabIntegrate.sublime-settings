@@ -33,5 +33,8 @@
 	"project_id": 0,
 
 	//Your user token for GitLab, found in [host]/profile/account 
-	"user_token":"token not set"	
+	"user_token":"token not set",
+	
+	//set to false if you want to use HTTPS with a self-signed certificate
+	"verify_ssl":true
 }
