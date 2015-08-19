@@ -22,9 +22,11 @@ Before using GitlabIntegrate, you should configure the User Settings file. If yo
 1. Via the menu at 
 
    `Preferences -> Package Settings -> Gitlab Integrate -> Settings - User`
+
 2. Via the menu at
 
    `Tools -> Gitlab Integrate -> Access User Settings`
+   
 3. Via file browser at
 
    `[sublime installation directory]/Packages/User/GitlabIntegrate.sublime-settings` 
@@ -57,6 +59,9 @@ Then, copy and paste the following text into the file (replacing any text alread
 	your host and user_token. All the projects you have access to should be listed with their IDs.
 	*/
 	"project_id": 0	
+
+	//set to false if you want to use HTTPS with a self-signed certificate
+	"verify_ssl":true
 }
 ```
 

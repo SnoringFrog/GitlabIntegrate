@@ -96,7 +96,7 @@ class Settings:
 		self.project_host = self._load_setting("HOST", self.NO_HOST)
 		self.project_id = self._load_setting("PROJECT", 0)
 		self.user_token = self._load_setting("TOKEN", self.NO_TOKEN)
-		self.verify_ssl = self._load_setting("SSL", False)
+		self.verify_ssl = self._load_setting("SSL", True)
 		
 		OUTPUT_PREFIX = self._load_setting("OUTPUT_PREFIX", "[GLI]:")
 		EDIT_ISSUE_VIEW_NAME = self._load_setting("EDIT_ISSUE_VIEW_NAME", "[GLI]: Editing Issue")
