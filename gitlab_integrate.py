@@ -56,7 +56,8 @@ class Settings:
 	"HOST": "project_host",
 	"OUTPUT_PREFIX": "output_prefix",
 	"PROJECT": "project_id",
-	"TOKEN": "user_token"	
+	"TOKEN": "user_token",
+	"SSL": "verify_ssl"
 	}
 
 	#Settings default/unset values
@@ -95,6 +96,7 @@ class Settings:
 		self.project_host = self._load_setting("HOST", self.NO_HOST)
 		self.project_id = self._load_setting("PROJECT", 0)
 		self.user_token = self._load_setting("TOKEN", self.NO_TOKEN)
+		self.verify_ssl = self._load_setting("SSL", False)
 		
 		OUTPUT_PREFIX = self._load_setting("OUTPUT_PREFIX", "[GLI]:")
 		EDIT_ISSUE_VIEW_NAME = self._load_setting("EDIT_ISSUE_VIEW_NAME", "[GLI]: Editing Issue")
@@ -113,7 +115,7 @@ class Settings:
 			return
 		elif host != self.project_host or token != self.user_token:
 			global git
-			git = gitlab.Gitlab(self.project_host, token=self.user_token)
+			git = gitlab.Gitlab(self.project_host, token=self.user_token, verify_ssl=self.verify_ssl)
 			_status_print("Reconnected to Gitlab using host " + self.project_host + " and token " + self.user_token)
 
 	def change_setting(self, setting, value):
